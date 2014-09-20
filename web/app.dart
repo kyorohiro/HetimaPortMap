@@ -10,9 +10,45 @@ import 'package:dart_web_toolkit/scheduler.dart' as scheduler;
 import 'package:dart_web_toolkit/validation.dart' as validation;
 import 'package:hetima/hetima.dart' as hetima;
 import 'package:hetima/hetima_cl.dart' as hetimacl;
-//import './mainview.dart' as appview;
-hetima.UpnpDeviceSearcher ssdp = null;
+import './mainview.dart' as appview;
 
+
+hetima.UpnpDeviceSearcher deviceSearcher = null;
+appview.MainView mainView = new appview.MainView();
+
+void main() {
+  mainView.intialize();
+  mainView.onClickSearchButton.listen((int v) {
+    print("###a");
+    startSearchDevice();
+  });
+
+  setup();
+}
+
+void setup() {
+  hetima.UpnpDeviceSearcher.createInstance(new hetimacl.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
+    deviceSearcher = searcher;
+    searcher.onReceive().listen((hetima.UPnpDeviceInfo info) {
+      print("log:" + info.toString());
+      mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
+    });
+  });
+}
+
+void startSearchDevice() {
+  mainView.clearFoundRouterList();
+  if (deviceSearcher != null) {
+    deviceSearcher.searchWanPPPDevice().then((int v){
+      mainView.clearFoundRouterList();
+      for(hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
+        mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
+      }
+    });
+  }
+}
+
+/*
 ui.ListBox uiRouterListBox = new ui.ListBox();
 ui.VerticalPanel vMainPanel = new ui.VerticalPanel();
 ui.VerticalPanel vSubPanel = new ui.VerticalPanel();
@@ -20,9 +56,8 @@ ui.VerticalPanel infoPanel = new ui.VerticalPanel();
 ui.VerticalPanel otherOperationPanel = new ui.VerticalPanel();
 hetima.UpnpDeviceSearcher deviceSearcher = null;
 
+
 void main() {
-//  appview.MainView mainview = new appview.MainView();
-//  mainview.a();
   initMainTab();
   initTab();
 
@@ -133,3 +168,4 @@ void initMainTab() {
     updateMap();
   }));
 }
+ */
