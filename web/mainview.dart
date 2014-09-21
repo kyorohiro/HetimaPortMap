@@ -178,11 +178,11 @@ class MainView {
     int numRows = grid.getRowCount();
     int numColumns = grid.getColumnCount();
     {
-      grid.setWidget(0, 0, new ui.Html("Description"));
-      grid.setWidget(0, 1, new ui.Html("Protocol"));
-      grid.setWidget(0, 2, new ui.Html("Public Port"));
-      grid.setWidget(0, 3, new ui.Html("Local IP"));
-      grid.setWidget(0, 4, new ui.Html("Local Port"));
+      grid.setWidget(0, 4, new ui.Html("Description"));
+      grid.setWidget(0, 0, new ui.Html("Protocol"));
+      grid.setWidget(0, 1, new ui.Html("Public Port"));
+      grid.setWidget(0, 2, new ui.Html("Local IP"));
+      grid.setWidget(0, 3, new ui.Html("Local Port"));
     }
 
     int row = 1;
@@ -198,11 +198,11 @@ class MainView {
       l3.addStyleName("hetima-grid");
       l4.addStyleName("hetima-grid");
 
-      grid.setWidget(row, 0, l0);
-      grid.setWidget(row, 1, l1);
-      grid.setWidget(row, 2, l2);
-      grid.setWidget(row, 3, l3);
-      grid.setWidget(row, 4, l4);
+      grid.setWidget(row, 4, l0);
+      grid.setWidget(row, 0, l1);
+      grid.setWidget(row, 1, l2);
+      grid.setWidget(row, 2, l3);
+      grid.setWidget(row, 3, l4);
       row++;
     }
     _otherForSubPanel.add(grid);

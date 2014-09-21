@@ -33,6 +33,10 @@ void main() {
   mainView.onSelectRouter.listen((String v) {
     print("### r "+v);
   });
+  
+  mainView.onClieckAddPortMapButton.listen((appview.AppPortMapInfo i) {
+    print("### p "+i.description); 
+  });
   setup();
 }
 
