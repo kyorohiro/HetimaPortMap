@@ -22,7 +22,17 @@ void main() {
     print("###a");
     startSearchDevice();
   });
-
+  mainView.onSelectTab.listen((int v) {
+    if (v == appview.MainView.MAIN) {
+      print("### main");
+    } else {
+      print("### list");
+      startUpdateList();
+    }
+  });
+  mainView.onSelectRouter.listen((String v) {
+    print("### r "+v);
+  });
   setup();
 }
 
@@ -36,17 +46,66 @@ void setup() {
   });
 }
 
-void startSearchDevice() {
-  mainView.clearFoundRouterList();
-  if (deviceSearcher != null) {
-    deviceSearcher.searchWanPPPDevice().then((int v){
-      mainView.clearFoundRouterList();
-      for(hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
-        mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
+hetima.UPnpDeviceInfo getRouter() {
+  if(deviceSearcher.deviceInfoList.length<=0) {
+    return null;
+  }
+  String routerName = mainView.currentSelectRouter();
+  for(hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
+    if(routerName == info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*")) {
+      return info;
+    }
+  }
+  return deviceSearcher.deviceInfoList.first;
+}
+
+void startUpdateList() {
+  mainView.clearPortMappInfo();
+  if (deviceSearcher == null) {
+    return;
+  }
+  hetima.UPnpDeviceInfo info = getRouter();
+  List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
+  int index = 0;
+  hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
+  a() {
+    pppDevice.requestGetGenericPortMapping(index).then((hetima.UPnpGetGenericPortMappingResponse r) {
+      if(r.resultCode != 200) {
+        return;
       }
+
+      appview.AppPortMapInfo portMapInfo = new appview.AppPortMapInfo();
+      portMapInfo.publicPort = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewExternalPort, "");
+      portMapInfo.localIp = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewInternalClient, "");
+      portMapInfo.localPort = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewInternalPort, "");
+      portMapInfo.protocol = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewProtocol, "");
+      portMapInfo.description = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewPortMappingDescription, "");
+      if(portMapInfo.localPort.replaceAll(" |\t|\r|\n", "") == "" && portMapInfo.localIp.replaceAll(" |\t|\r|\n", "") == "")
+      {
+        return;
+      }
+       mainView.addPortMappInfo(portMapInfo);
+      index++;
+      a();
+    }).catchError((e){
     });
   }
+  a();
 }
+void startSearchDevice() {
+  if (deviceSearcher == null) {
+    return;
+  }
+  mainView.clearFoundRouterList();
+
+  deviceSearcher.searchWanPPPDevice().then((int v) {
+    mainView.clearFoundRouterList();
+    for (hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
+      mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
+    }
+  });
+}
+
 
 /*
 ui.ListBox uiRouterListBox = new ui.ListBox();
