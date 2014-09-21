@@ -26,10 +26,13 @@ class MainView {
   async.StreamController _controllerSearchButton = new async.StreamController.broadcast();
   async.StreamController _controllerTab = new async.StreamController.broadcast();
   async.StreamController _controllerSelectRouter = new async.StreamController.broadcast();
+  async.StreamController _controllerAddPortMapButton = new async.StreamController.broadcast();
 
   async.Stream<int> get onClickSearchButton => _controllerSearchButton.stream;
   async.Stream<int> get onSelectTab => _controllerTab.stream;
   async.Stream<String> get onSelectRouter => _controllerSelectRouter.stream;
+  async.Stream<AppPortMapInfo> get onClieckAddPortMapButton => _controllerAddPortMapButton.stream;
+ 
 
   void clearFoundRouterList() {
     _foundRouter.clear();
@@ -48,7 +51,7 @@ class MainView {
     updateRouterList();
   }
   String currentSelectRouter() {
-    if(_foundRouter.getSelectedIndex() == -1) {
+    if (_foundRouter.getSelectedIndex() == -1) {
       return "";
     }
     return _foundRouter.getValue(_foundRouter.getSelectedIndex());
@@ -103,6 +106,7 @@ class MainView {
     }));
     {
       _infoForSubPanel.add(new ui.Label("main operation"));
+      initMainPanel();
     }
     {
       _otherForSubPanel.add(new ui.Label("other operation"));
@@ -110,6 +114,56 @@ class MainView {
     }
   }
 
+  void initMainPanel() {
+    ui.FlexTable layout = new ui.FlexTable();
+    layout.setCellSpacing(6);
+    ui.FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
+
+    layout.setHtml(0, 0, "Enter Port Map");
+    cellFormatter.setColSpan(0, 0, 2);
+    cellFormatter.setHorizontalAlignment(0, 0, i18n.HasHorizontalAlignment.ALIGN_CENTER);
+
+    ui.TextBox localPortBox = new ui.TextBox();
+    ui.TextBox publicPortBox = new ui.TextBox();
+    ui.TextBox descriptionBox = new ui.TextBox();
+    ui.RadioButton radioTCP = new ui.RadioButton("protocol", "TCP");
+    ui.RadioButton radioUDP = new ui.RadioButton("protocol", "UDP");
+
+    layout.setHtml(1, 0, "Local Port:");
+    layout.setWidget(1, 1, localPortBox);
+    layout.setHtml(2, 0, "Public Port:");
+    layout.setWidget(2, 1, publicPortBox);
+    layout.setHtml(3, 0, "Protocol:");
+    {
+      ui.VerticalPanel vPanel = new ui.VerticalPanel();
+      vPanel.add(radioTCP);
+      vPanel.add(radioUDP);
+      radioTCP.setValue(true);
+      layout.setWidget(3, 1, vPanel);
+    }
+    layout.setHtml(4, 0, "Description:");
+    layout.setWidget(4, 1, descriptionBox);
+
+    ui.Button button = new ui.Button("add", new event.ClickHandlerAdapter((event.ClickEvent event) {
+      AppPortMapInfo info = new AppPortMapInfo();
+      info.description = descriptionBox.text;
+      info.localIp = localPortBox.text;
+      info.publicPort = publicPortBox.text;
+      if(radioTCP.enabled) {
+        info.protocol = "TCP";
+      } else {
+        info.protocol = "UDP";
+      }
+      _controllerAddPortMapButton.add(info);
+    }));
+    layout.setWidget(5, 0, button);
+
+    ui.DecoratorPanel decPanel = new ui.DecoratorPanel();
+    decPanel.addStyleName("hetima-grid");
+    decPanel.setWidget(layout);
+    _infoForSubPanel.add(decPanel);
+
+  }
   void updateRouterList() {
     //
     // clear
@@ -117,9 +171,9 @@ class MainView {
 
     //
     // Create a grid
-    ui.Grid grid = new ui.Grid(1+portMapList.length, 5);
+    ui.Grid grid = new ui.Grid(1 + portMapList.length, 5);
     grid.addStyleName("cw-FlexTable");
-     
+
     // Add images to the grid
     int numRows = grid.getRowCount();
     int numColumns = grid.getColumnCount();
@@ -128,7 +182,7 @@ class MainView {
       grid.setWidget(0, 1, new ui.Html("Protocol"));
       grid.setWidget(0, 2, new ui.Html("Public Port"));
       grid.setWidget(0, 3, new ui.Html("Local IP"));
-      grid.setWidget(0, 4, new ui.Html("Local Port"));        
+      grid.setWidget(0, 4, new ui.Html("Local Port"));
     }
 
     int row = 1;
@@ -148,15 +202,14 @@ class MainView {
       grid.setWidget(row, 1, l1);
       grid.setWidget(row, 2, l2);
       grid.setWidget(row, 3, l3);
-      grid.setWidget(row, 4, l4);  
+      grid.setWidget(row, 4, l4);
       row++;
     }
     _otherForSubPanel.add(grid);
   }
 }
 
-class AppPortMapInfo
-{
+class AppPortMapInfo {
   String protocol = "";
   String publicPort = "";
   String localIp = "";
