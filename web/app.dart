@@ -41,6 +41,9 @@ void main() {
   
   mainView.onClieckAddPortMapButton.listen((appview.AppPortMapInfo i) {
     print("### p "+i.description); 
+    ui.DialogBox dialogBox = appview.createDialogBox("test", new ui.Html("####${i.description}"));
+    dialogBox.show();
+    dialogBox.center();
   });
   setup();
 }

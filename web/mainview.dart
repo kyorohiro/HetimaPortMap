@@ -61,9 +61,9 @@ class MainView {
 
     layout.setHtml(1, 0, "Global IP:");
     _globalIpBox.addStyleName("hetima-grid");
-    layout.setWidget(1, 1, _globalIpBox);
+    layout.setWidget(2, 1, _globalIpBox);
 
-    layout.setHtml(2, 0, "Local IP:");
+    layout.setHtml(3, 0, "Local IP:");
 //    layout.setWidget(2, 1, _localIpBox);
     {
       ui.Grid grid = new ui.Grid(1 + portMapList.length, 5);
@@ -84,7 +84,7 @@ class MainView {
 //        grid.setWidget(1, 1, widget);
       }
 
-      layout.setWidget(3, 1, grid);
+      layout.setWidget(4, 1, grid);
     }
 
     _infoForSubPanel.add(layout);
@@ -283,4 +283,38 @@ class AppPortMapInfo {
 class AppNetworkInterface {
   String ip = "";
   String length = "";
+}
+
+/**
+ * ui.DialogBox dialogBox = createDialogBox(String title, ui.Widget body)
+ * dialogBox.setGlassEnabled(false);
+ * dialogBox.show();
+ * dialogBox.center();
+ */
+ui.DialogBox createDialogBox(String title, ui.Widget body) {
+  ui.DialogBox dialogBox = new ui.DialogBox();
+  dialogBox.text = title;
+
+  // Create a table to layout the content
+  ui.VerticalPanel dialogContents = new ui.VerticalPanel();
+  dialogContents.spacing = 4;
+  dialogBox.setWidget(dialogContents);
+
+  // Add some text to the top of the dialog
+  dialogContents.add(body);
+  dialogContents.setWidgetCellHorizontalAlignment(body, i18n.HasHorizontalAlignment.ALIGN_CENTER);
+
+  // Add a close button at the bottom of the dialog
+  ui.Button closeButton = new ui.Button("Close", new event.ClickHandlerAdapter((event.ClickEvent evt){
+    dialogBox.hide();
+  }));
+  dialogContents.add(closeButton);
+  if (i18n.LocaleInfo.getCurrentLocale().isRTL()) {
+    dialogContents.setWidgetCellHorizontalAlignment(closeButton, i18n.HasHorizontalAlignment.ALIGN_LEFT);
+  } else {
+    dialogContents.setWidgetCellHorizontalAlignment(closeButton, i18n.HasHorizontalAlignment.ALIGN_RIGHT);
+  }
+
+  // Return the dialog box
+  return dialogBox;
 }
