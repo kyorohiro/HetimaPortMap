@@ -15,13 +15,15 @@ class MainView {
 
   static const int MAIN = 0;
   static const int LIST = 1;
+  static const int INFO = 2;
 
   ui.ListBox _foundRouter = new ui.ListBox();
   ui.VerticalPanel _mainPanel = new ui.VerticalPanel();
   ui.VerticalPanel _subPanel = new ui.VerticalPanel();
 
-  ui.VerticalPanel _infoForSubPanel = new ui.VerticalPanel();
+  ui.VerticalPanel _mainForSubPanel = new ui.VerticalPanel();
   ui.VerticalPanel _otherForSubPanel = new ui.VerticalPanel();
+  ui.VerticalPanel _infoForSubPanel = new ui.VerticalPanel();
 
   async.StreamController _controllerSearchButton = new async.StreamController.broadcast();
   async.StreamController _controllerTab = new async.StreamController.broadcast();
@@ -33,13 +35,41 @@ class MainView {
   async.Stream<String> get onSelectRouter => _controllerSelectRouter.stream;
   async.Stream<AppPortMapInfo> get onClieckAddPortMapButton => _controllerAddPortMapButton.stream;
  
-
   void clearFoundRouterList() {
     _foundRouter.clear();
   }
 
   void addFoundRouterList(String itemName) {
     _foundRouter.addItem(itemName);
+  }
+
+  ui.TextBox _globalIpBox = new ui.TextBox();
+  ui.TextBox _localIpBox = new ui.TextBox();
+
+  void setGlobalIp(String ip) {
+    _globalIpBox.text = ip;
+  }
+
+  void setLocalIp(String ip) {
+    _localIpBox.text = ip;
+  }
+
+  void updateInfoPanel() {
+    _infoForSubPanel.clear();
+    ui.FlexTable layout = new ui.FlexTable();
+    layout.setCellSpacing(6);
+    ui.FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
+    layout.setHtml(0, 0, "Information");
+    cellFormatter.setColSpan(0, 0, 2);
+    cellFormatter.setHorizontalAlignment(0, 0, i18n.HasHorizontalAlignment.ALIGN_CENTER);
+
+    layout.setHtml(1, 0, "Global IP:");
+    layout.setWidget(1, 1, _globalIpBox);
+
+    layout.setHtml(2, 0, "Local IP:");
+    layout.setWidget(2, 1, _localIpBox);
+
+    _infoForSubPanel.add(layout);
   }
 
   List<AppPortMapInfo> portMapList = [];
@@ -50,12 +80,14 @@ class MainView {
     portMapList.add(info);
     updateRouterList();
   }
+ 
   String currentSelectRouter() {
     if (_foundRouter.getSelectedIndex() == -1) {
       return "";
     }
     return _foundRouter.getValue(_foundRouter.getSelectedIndex());
   }
+
   void intialize() {
     initButton();
     initMainTab();
@@ -65,6 +97,7 @@ class MainView {
     ui.TabBar bar = new ui.TabBar();
     bar.addTabText("main");
     bar.addTabText("list");
+    bar.addTabText("info");
     bar.selectTab(0);
     _mainPanel.add(bar);
     _mainPanel.add(_subPanel);
@@ -73,12 +106,17 @@ class MainView {
       int selectedTabIndx = evt.getSelectedItem();
       if (selectedTabIndx == 0) {
         _subPanel.clear();
-        _subPanel.add(_infoForSubPanel);
+        _subPanel.add(_mainForSubPanel);
         _controllerTab.add(MAIN);
-      } else {
+      } else if(selectedTabIndx == 1){
         _subPanel.clear();
         _subPanel.add(_otherForSubPanel);
         _controllerTab.add(LIST);
+      } else {
+        _subPanel.clear();
+        _subPanel.add(_infoForSubPanel);
+        updateInfoPanel();
+        _controllerTab.add(INFO);
       }
     }));
 
@@ -89,7 +127,7 @@ class MainView {
     ui.RootPanel.get().add(_mainPanel);
     _subPanel.clear();
 
-    _subPanel.add(_infoForSubPanel);
+    _subPanel.add(_mainForSubPanel);
 
   }
 
@@ -105,7 +143,7 @@ class MainView {
     _foundRouter.addChangeHandler(new event.ChangeHandlerAdapter((event.ChangeEvent event) {
     }));
     {
-      _infoForSubPanel.add(new ui.Label("main operation"));
+      _mainForSubPanel.add(new ui.Label("main operation"));
       initMainPanel();
     }
     {
@@ -161,9 +199,10 @@ class MainView {
     ui.DecoratorPanel decPanel = new ui.DecoratorPanel();
     decPanel.addStyleName("hetima-grid");
     decPanel.setWidget(layout);
-    _infoForSubPanel.add(decPanel);
+    _mainForSubPanel.add(decPanel);
 
   }
+
   void updateRouterList() {
     //
     // clear
