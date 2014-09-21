@@ -64,7 +64,6 @@ class MainView {
     layout.setWidget(2, 1, _globalIpBox);
 
     layout.setHtml(3, 0, "Local IP:");
-//    layout.setWidget(2, 1, _localIpBox);
     {
       ui.Grid grid = new ui.Grid(1 + portMapList.length, 5);
       grid.addStyleName("cw-FlexTable");
@@ -72,13 +71,13 @@ class MainView {
       grid.setWidget(0, 1, new ui.Html("Length"));
       {
         int index = 0;
-        for(AppNetworkInterface  i in networkInterfaceList) {
+        for (AppNetworkInterface i in networkInterfaceList) {
           ui.Html l0 = new ui.Html("${i.ip}");
           l0.addStyleName("hetima-grid");
           ui.Html l1 = new ui.Html("${i.length}");
           l1.addStyleName("hetima-grid");
-          grid.setWidget(index+1, 0, l0);
-          grid.setWidget(index+1, 1, l1);
+          grid.setWidget(index + 1, 0, l0);
+          grid.setWidget(index + 1, 1, l1);
           index++;
         }
 //        grid.setWidget(1, 1, widget);
@@ -103,7 +102,7 @@ class MainView {
   void clearNetworkInterface() {
     networkInterfaceList.clear();
   }
-  
+
   void addNetworkInterface(AppNetworkInterface value) {
     networkInterfaceList.add(value);
     updateInfoPanel();
@@ -117,36 +116,10 @@ class MainView {
   }
 
   void intialize() {
-    initButton();
+    initTopPanel();
     initMainTab();
-
+    initTab();
     _mainPanel.spacing = 10;
-
-    ui.TabBar bar = new ui.TabBar();
-    bar.addTabText("main");
-    bar.addTabText("list");
-    bar.addTabText("info");
-    bar.selectTab(0);
-    _mainPanel.add(bar);
-    _mainPanel.add(_subPanel);
-
-    bar.addSelectionHandler(new event.SelectionHandlerAdapter((event.SelectionEvent evt) {
-      int selectedTabIndx = evt.getSelectedItem();
-      if (selectedTabIndx == 0) {
-        _subPanel.clear();
-        _subPanel.add(_mainForSubPanel);
-        _controllerTab.add(MAIN);
-      } else if (selectedTabIndx == 1) {
-        _subPanel.clear();
-        _subPanel.add(_otherForSubPanel);
-        _controllerTab.add(LIST);
-      } else {
-        _subPanel.clear();
-        _subPanel.add(_infoForSubPanel);
-        updateInfoPanel();
-        _controllerTab.add(INFO);
-      }
-    }));
 
     _foundRouter.addChangeHandler(new event.ChangeHandlerAdapter((event.ChangeEvent event) {
       _controllerSelectRouter.add(_foundRouter.getValue(_foundRouter.getSelectedIndex()));
@@ -159,7 +132,7 @@ class MainView {
 
   }
 
-  void initButton() {
+  void initTopPanel() {
     ui.Button button = new ui.Button("search router", new event.ClickHandlerAdapter((event.ClickEvent event) {
       _controllerSearchButton.add(0);
     }));
@@ -228,6 +201,34 @@ class MainView {
     decPanel.addStyleName("hetima-grid");
     decPanel.setWidget(layout);
     _mainForSubPanel.add(decPanel);
+  }
+
+  void initTab() {
+    ui.TabBar bar = new ui.TabBar();
+    bar.addTabText("main");
+    bar.addTabText("list");
+    bar.addTabText("info");
+    bar.selectTab(0);
+    _mainPanel.add(bar);
+    _mainPanel.add(_subPanel);
+
+    bar.addSelectionHandler(new event.SelectionHandlerAdapter((event.SelectionEvent evt) {
+      int selectedTabIndx = evt.getSelectedItem();
+      if (selectedTabIndx == 0) {
+        _subPanel.clear();
+        _subPanel.add(_mainForSubPanel);
+        _controllerTab.add(MAIN);
+      } else if (selectedTabIndx == 1) {
+        _subPanel.clear();
+        _subPanel.add(_otherForSubPanel);
+        _controllerTab.add(LIST);
+      } else {
+        _subPanel.clear();
+        _subPanel.add(_infoForSubPanel);
+        updateInfoPanel();
+        _controllerTab.add(INFO);
+      }
+    }));
 
   }
 
@@ -309,7 +310,7 @@ ui.DialogBox createDialogBox(String title, ui.Widget body) {
   dialogContents.setWidgetCellHorizontalAlignment(body, i18n.HasHorizontalAlignment.ALIGN_CENTER);
 
   // Add a close button at the bottom of the dialog
-  ui.Button closeButton = new ui.Button("Close", new event.ClickHandlerAdapter((event.ClickEvent evt){
+  ui.Button closeButton = new ui.Button("Close", new event.ClickHandlerAdapter((event.ClickEvent evt) {
     dialogBox.hide();
   }));
   dialogContents.add(closeButton);
