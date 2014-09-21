@@ -186,6 +186,7 @@ class MainView {
     cellFormatter.setHorizontalAlignment(0, 0, i18n.HasHorizontalAlignment.ALIGN_CENTER);
 
     ui.TextBox localPortBox = new ui.TextBox();
+    ui.TextBox localAddressBox = new ui.TextBox();
     ui.TextBox publicPortBox = new ui.TextBox();
     ui.TextBox descriptionBox = new ui.TextBox();
     ui.RadioButton radioTCP = new ui.RadioButton("protocol", "TCP");
@@ -203,13 +204,16 @@ class MainView {
       radioTCP.setValue(true);
       layout.setWidget(3, 1, vPanel);
     }
-    layout.setHtml(4, 0, "Description:");
-    layout.setWidget(4, 1, descriptionBox);
+    layout.setHtml(4, 0, "Local Address:");
+    layout.setWidget(4, 1, localAddressBox);
+    layout.setHtml(5, 0, "Description:");
+    layout.setWidget(5, 1, descriptionBox);
 
     ui.Button button = new ui.Button("add", new event.ClickHandlerAdapter((event.ClickEvent event) {
       AppPortMapInfo info = new AppPortMapInfo();
       info.description = descriptionBox.text;
-      info.localIp = localPortBox.text;
+      info.localPort = localPortBox.text;
+      info.localIp = localAddressBox.text;
       info.publicPort = publicPortBox.text;
       if (radioTCP.enabled) {
         info.protocol = "TCP";
@@ -218,7 +222,7 @@ class MainView {
       }
       _controllerAddPortMapButton.add(info);
     }));
-    layout.setWidget(5, 0, button);
+    layout.setWidget(6, 1, button);
 
     ui.DecoratorPanel decPanel = new ui.DecoratorPanel();
     decPanel.addStyleName("hetima-grid");

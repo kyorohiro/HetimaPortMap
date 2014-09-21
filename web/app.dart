@@ -41,9 +41,7 @@ void main() {
   
   mainView.onClieckAddPortMapButton.listen((appview.AppPortMapInfo i) {
     print("### p "+i.description); 
-    ui.DialogBox dialogBox = appview.createDialogBox("test", new ui.Html("####${i.description}"));
-    dialogBox.show();
-    dialogBox.center();
+    startAddPortMapp(i);
   });
   setup();
 }
@@ -150,6 +148,17 @@ void startAddPortMapp(appview.AppPortMapInfo i)
   pppDevice.requestAddPortMapping(
       int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp,
       1, i.description, 0).then((int v){
+    String result = "OK";
+    if(v != 200) {
+      result = " $result resultCode = ${v}";
+    }
+    ui.DialogBox dialogBox = appview.createDialogBox("#### Port Map ####", new ui.Html(result));
+    dialogBox.show();
+    dialogBox.center();
+  }).catchError((e){
+    ui.DialogBox dialogBox = appview.createDialogBox("#### ERROR ####", new ui.Html("failed add port mapping"));
+    dialogBox.show();
+    dialogBox.center();
   });
 /*
    pppDevice.requestAddPortMapping(
