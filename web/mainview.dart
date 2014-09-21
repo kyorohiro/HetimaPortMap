@@ -24,16 +24,18 @@ class MainView {
   ui.VerticalPanel _mainForSubPanel = new ui.VerticalPanel();
   ui.VerticalPanel _otherForSubPanel = new ui.VerticalPanel();
   ui.VerticalPanel _infoForSubPanel = new ui.VerticalPanel();
-
+  
   async.StreamController _controllerSearchButton = new async.StreamController.broadcast();
   async.StreamController _controllerTab = new async.StreamController.broadcast();
   async.StreamController _controllerSelectRouter = new async.StreamController.broadcast();
   async.StreamController _controllerAddPortMapButton = new async.StreamController.broadcast();
+  async.StreamController _controllerDelPortMapButton = new async.StreamController.broadcast();
 
   async.Stream<int> get onClickSearchButton => _controllerSearchButton.stream;
   async.Stream<int> get onSelectTab => _controllerTab.stream;
   async.Stream<String> get onSelectRouter => _controllerSelectRouter.stream;
   async.Stream<AppPortMapInfo> get onClieckAddPortMapButton => _controllerAddPortMapButton.stream;
+  async.Stream<AppPortMapInfo> get onClieckDelPortMapButton => _controllerDelPortMapButton.stream;
 
   void clearFoundRouterList() {
     _foundRouter.clear();
@@ -267,7 +269,9 @@ class MainView {
       l3.addStyleName("hetima-grid");
       l4.addStyleName("hetima-grid");
 
-      ui.Button b = new ui.Button("x");
+      ui.Button b = new ui.Button("x", new event.ClickHandlerAdapter((event.ClickEvent evt) {
+        _controllerDelPortMapButton.add(i);
+      }));
       grid.setWidget(row, 5, l0);
       grid.setWidget(row, 0, b);
       grid.setWidget(row, 1, l1);

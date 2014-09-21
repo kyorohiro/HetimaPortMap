@@ -43,6 +43,11 @@ void main() {
     print("### p "+i.description); 
     startAddPortMapp(i);
   });
+  
+  mainView.onClieckDelPortMapButton.listen((appview.AppPortMapInfo i) {
+    print("### d "+i.description); 
+    startDellPortMapp(i);
+  });
   setup();
 }
 
@@ -162,4 +167,23 @@ void startAddPortMapp(appview.AppPortMapInfo i)
   });
 }
 
+void startDellPortMapp(appview.AppPortMapInfo i)
+{
+  hetima.UPnpDeviceInfo info = getRouter();
+  hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
+  
+  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((int v){
+    String result = "OK";
+    if(v != 200) {
+      result = " $result resultCode = ${v}";
+    }
+    ui.DialogBox dialogBox = appview.createDialogBox("#### Port Map ####", new ui.Html(result));
+    dialogBox.show();
+    dialogBox.center();
+  }).catchError((e){
+    ui.DialogBox dialogBox = appview.createDialogBox("#### ERROR ####", new ui.Html("failed add port mapping"));
+    dialogBox.show();
+    dialogBox.center();
+  });
+}
 
