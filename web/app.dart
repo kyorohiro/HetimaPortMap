@@ -80,7 +80,14 @@ void startUpdateIpInfo() {
   }).catchError((e) {
     mainView.setGlobalIp("failed");
   });
-  (new hetimacl.HetiSocketBuilderChrome()).getNetworkInterfaces().then((List<hetima.HetiNetworkInterface> i) {
+  (new hetimacl.HetiSocketBuilderChrome()).getNetworkInterfaces().then((List<hetima.HetiNetworkInterface> interfaceList) {
+    mainView.clearNetworkInterface();
+    for(hetima.HetiNetworkInterface i in interfaceList) {
+      appview.AppNetworkInterface interface = new appview.AppNetworkInterface();
+      interface.ip = i.address;
+      interface.length = "${i.prefixLength}";
+      mainView.addNetworkInterface(interface);
+    }
 //    i.first
   });
 }

@@ -34,7 +34,7 @@ class MainView {
   async.Stream<int> get onSelectTab => _controllerTab.stream;
   async.Stream<String> get onSelectRouter => _controllerSelectRouter.stream;
   async.Stream<AppPortMapInfo> get onClieckAddPortMapButton => _controllerAddPortMapButton.stream;
- 
+
   void clearFoundRouterList() {
     _foundRouter.clear();
   }
@@ -43,19 +43,15 @@ class MainView {
     _foundRouter.addItem(itemName);
   }
 
-  ui.TextBox _globalIpBox = new ui.TextBox();
-  ui.TextBox _localIpBox = new ui.TextBox();
+  ui.Html _globalIpBox = new ui.Html("");
 
   void setGlobalIp(String ip) {
     _globalIpBox.text = ip;
   }
 
-  void setLocalIp(String ip) {
-    _localIpBox.text = ip;
-  }
-
   void updateInfoPanel() {
     _infoForSubPanel.clear();
+
     ui.FlexTable layout = new ui.FlexTable();
     layout.setCellSpacing(6);
     ui.FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
@@ -64,15 +60,38 @@ class MainView {
     cellFormatter.setHorizontalAlignment(0, 0, i18n.HasHorizontalAlignment.ALIGN_CENTER);
 
     layout.setHtml(1, 0, "Global IP:");
+    _globalIpBox.addStyleName("hetima-grid");
     layout.setWidget(1, 1, _globalIpBox);
 
     layout.setHtml(2, 0, "Local IP:");
-    layout.setWidget(2, 1, _localIpBox);
+//    layout.setWidget(2, 1, _localIpBox);
+    {
+      ui.Grid grid = new ui.Grid(1 + portMapList.length, 5);
+      grid.addStyleName("cw-FlexTable");
+      grid.setWidget(0, 0, new ui.Html("IP"));
+      grid.setWidget(0, 1, new ui.Html("Length"));
+      {
+        int index = 0;
+        for(AppNetworkInterface  i in networkInterfaceList) {
+          ui.Html l0 = new ui.Html("${i.ip}");
+          l0.addStyleName("hetima-grid");
+          ui.Html l1 = new ui.Html("${i.length}");
+          l1.addStyleName("hetima-grid");
+          grid.setWidget(index+1, 0, l0);
+          grid.setWidget(index+1, 1, l1);
+          index++;
+        }
+//        grid.setWidget(1, 1, widget);
+      }
+
+      layout.setWidget(3, 1, grid);
+    }
 
     _infoForSubPanel.add(layout);
   }
 
   List<AppPortMapInfo> portMapList = [];
+  List<AppNetworkInterface> networkInterfaceList = [];
   void clearPortMappInfo() {
     portMapList.clear();
   }
@@ -80,7 +99,16 @@ class MainView {
     portMapList.add(info);
     updateRouterList();
   }
- 
+
+  void clearNetworkInterface() {
+    networkInterfaceList.clear();
+  }
+  
+  void addNetworkInterface(AppNetworkInterface value) {
+    networkInterfaceList.add(value);
+    updateInfoPanel();
+  }
+
   String currentSelectRouter() {
     if (_foundRouter.getSelectedIndex() == -1) {
       return "";
@@ -108,7 +136,7 @@ class MainView {
         _subPanel.clear();
         _subPanel.add(_mainForSubPanel);
         _controllerTab.add(MAIN);
-      } else if(selectedTabIndx == 1){
+      } else if (selectedTabIndx == 1) {
         _subPanel.clear();
         _subPanel.add(_otherForSubPanel);
         _controllerTab.add(LIST);
@@ -142,14 +170,10 @@ class MainView {
     _mainPanel.add(_foundRouter);
     _foundRouter.addChangeHandler(new event.ChangeHandlerAdapter((event.ChangeEvent event) {
     }));
-    {
-      _mainForSubPanel.add(new ui.Label("main operation"));
-      initMainPanel();
-    }
-    {
-      _otherForSubPanel.add(new ui.Label("other operation"));
-      updateRouterList();
-    }
+    _mainForSubPanel.add(new ui.Label("main operation"));
+    initMainPanel();
+    _otherForSubPanel.add(new ui.Label("other operation"));
+    updateRouterList();
   }
 
   void initMainPanel() {
@@ -187,7 +211,7 @@ class MainView {
       info.description = descriptionBox.text;
       info.localIp = localPortBox.text;
       info.publicPort = publicPortBox.text;
-      if(radioTCP.enabled) {
+      if (radioTCP.enabled) {
         info.protocol = "TCP";
       } else {
         info.protocol = "UDP";
@@ -254,4 +278,9 @@ class AppPortMapInfo {
   String localIp = "";
   String localPort = "";
   String description = "";
+}
+
+class AppNetworkInterface {
+  String ip = "";
+  String length = "";
 }
