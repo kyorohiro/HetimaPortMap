@@ -17,41 +17,41 @@ hetima.UpnpDeviceSearcher deviceSearcher = null;
 appview.MainView mainView = new appview.MainView();
 
 void main() {
+  setupUI();
+  setupUpnp();
+}
+void setupUI() {
   mainView.intialize();
   mainView.onClickSearchButton.listen((int v) {
-    print("###a");
-    startSearchDevice();
+    print("### search router");
+    startSearchPPPDevice();
   });
   mainView.onSelectTab.listen((int v) {
+    print("### select tag ${v}");
     if (v == appview.MainView.MAIN) {
-      print("### main");
-    } else if(v == appview.MainView.LIST){
-      print("### list");
-      startUpdateList();
-    } else if(v == appview.MainView.INFO){
-      print("### info");
+    } else if (v == appview.MainView.LIST) {
+      startUpdatePortMappedList();
+    } else if (v == appview.MainView.INFO) {
       startUpdateIpInfo();
     } else {
-      print("### other");
     }
   });
   mainView.onSelectRouter.listen((String v) {
-    print("### r "+v);
+    print("### select router ${v}");
   });
-  
+
   mainView.onClieckAddPortMapButton.listen((appview.AppPortMapInfo i) {
-    print("### p "+i.description); 
+    print("### add port map ${i.description}");
     startAddPortMapp(i);
   });
-  
+
   mainView.onClieckDelPortMapButton.listen((appview.AppPortMapInfo i) {
-    print("### d "+i.description); 
-    startDellPortMapp(i);
+    print("### del port map ${i.description}");
+    startDeletePortMapp(i);
   });
-  setup();
 }
 
-void setup() {
+void setupUpnp() {
   hetima.UpnpDeviceSearcher.createInstance(new hetimacl.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
     deviceSearcher = searcher;
     searcher.onReceive().listen((hetima.UPnpDeviceInfo info) {
@@ -61,13 +61,16 @@ void setup() {
   });
 }
 
-hetima.UPnpDeviceInfo getRouter() {
-  if(deviceSearcher.deviceInfoList.length<=0) {
+hetima.UPnpDeviceInfo getCurrentRouter() {
+  if (deviceSearcher.deviceInfoList.length <= 0) {
     return null;
   }
   String routerName = mainView.currentSelectRouter();
-  for(hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
-    if(routerName == info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*")) {
+  for (hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
+    if (info == null) {
+      continue;
+    }
+    if (routerName == info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*")) {
       return info;
     }
   }
@@ -79,37 +82,43 @@ void startUpdateIpInfo() {
     return;
   }
 
-  hetima.UPnpDeviceInfo info = getRouter();
+  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  if (info == null) {
+    return;
+  }
+
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
-  pppDevice.requestGetExternalIPAddress().then((String ip){
+  pppDevice.requestGetExternalIPAddress().then((String ip) {
     mainView.setGlobalIp(ip);
   }).catchError((e) {
     mainView.setGlobalIp("failed");
   });
   (new hetimacl.HetiSocketBuilderChrome()).getNetworkInterfaces().then((List<hetima.HetiNetworkInterface> interfaceList) {
     mainView.clearNetworkInterface();
-    for(hetima.HetiNetworkInterface i in interfaceList) {
+    for (hetima.HetiNetworkInterface i in interfaceList) {
       appview.AppNetworkInterface interface = new appview.AppNetworkInterface();
       interface.ip = i.address;
       interface.length = "${i.prefixLength}";
       mainView.addNetworkInterface(interface);
     }
-//    i.first
   });
 }
 
-void startUpdateList() {
+void startUpdatePortMappedList() {
   mainView.clearPortMappInfo();
   if (deviceSearcher == null) {
     return;
   }
-  hetima.UPnpDeviceInfo info = getRouter();
+  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  if (info == null) {
+    return;
+  }
   List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
-  int index = 0;
+  int newPortmappingIndex = 0;
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
-  a() {
-    pppDevice.requestGetGenericPortMapping(index).then((hetima.UPnpGetGenericPortMappingResponse r) {
-      if(r.resultCode != 200) {
+  requestPortMapInfo() {
+    pppDevice.requestGetGenericPortMapping(newPortmappingIndex).then((hetima.UPnpGetGenericPortMappingResponse r) {
+      if (r.resultCode != 200) {
         return;
       }
 
@@ -119,19 +128,19 @@ void startUpdateList() {
       portMapInfo.localPort = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewInternalPort, "");
       portMapInfo.protocol = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewProtocol, "");
       portMapInfo.description = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewPortMappingDescription, "");
-      if(portMapInfo.localPort.replaceAll(" |\t|\r|\n", "") == "" && portMapInfo.localIp.replaceAll(" |\t|\r|\n", "") == "")
-      {
+      if (portMapInfo.localPort.replaceAll(" |\t|\r|\n", "") == "" && portMapInfo.localIp.replaceAll(" |\t|\r|\n", "") == "") {
         return;
       }
-       mainView.addPortMappInfo(portMapInfo);
-      index++;
-      a();
-    }).catchError((e){
+      mainView.addPortMappInfo(portMapInfo);
+      newPortmappingIndex++;
+      requestPortMapInfo();
+    }).catchError((e) {
     });
   }
-  a();
+  requestPortMapInfo();
 }
-void startSearchDevice() {
+
+void startSearchPPPDevice() {
   if (deviceSearcher == null) {
     return;
   }
@@ -145,45 +154,46 @@ void startSearchDevice() {
   });
 }
 
-void startAddPortMapp(appview.AppPortMapInfo i)
-{
-  hetima.UPnpDeviceInfo info = getRouter();
+void startAddPortMapp(appview.AppPortMapInfo i) {
+  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  if (info == null) {
+    return null;
+  }
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
 
-  pppDevice.requestAddPortMapping(
-      int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp,
-      1, i.description, 0).then((int v){
+  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0).then((int v) {
     String result = "OK";
-    if(v != 200) {
+    if (v != 200) {
       result = " $result resultCode = ${v}";
     }
     ui.DialogBox dialogBox = appview.createDialogBox("#### Port Map ####", new ui.Html(result));
     dialogBox.show();
     dialogBox.center();
-  }).catchError((e){
+  }).catchError((e) {
     ui.DialogBox dialogBox = appview.createDialogBox("#### ERROR ####", new ui.Html("failed add port mapping"));
     dialogBox.show();
     dialogBox.center();
   });
 }
 
-void startDellPortMapp(appview.AppPortMapInfo i)
-{
-  hetima.UPnpDeviceInfo info = getRouter();
+void startDeletePortMapp(appview.AppPortMapInfo i) {
+  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  if (info == null) {
+    return;
+  }
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
-  
-  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((int v){
+
+  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((int v) {
     String result = "OK";
-    if(v != 200) {
+    if (v != 200) {
       result = " $result resultCode = ${v}";
     }
     ui.DialogBox dialogBox = appview.createDialogBox("#### Port Map ####", new ui.Html(result));
     dialogBox.show();
     dialogBox.center();
-  }).catchError((e){
+  }).catchError((e) {
     ui.DialogBox dialogBox = appview.createDialogBox("#### ERROR ####", new ui.Html("failed add port mapping"));
     dialogBox.show();
     dialogBox.center();
   });
 }
-

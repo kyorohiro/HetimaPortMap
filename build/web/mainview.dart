@@ -24,7 +24,7 @@ class MainView {
   ui.VerticalPanel _mainForSubPanel = new ui.VerticalPanel();
   ui.VerticalPanel _otherForSubPanel = new ui.VerticalPanel();
   ui.VerticalPanel _infoForSubPanel = new ui.VerticalPanel();
-  
+
   async.StreamController _controllerSearchButton = new async.StreamController.broadcast();
   async.StreamController _controllerTab = new async.StreamController.broadcast();
   async.StreamController _controllerSelectRouter = new async.StreamController.broadcast();
@@ -37,6 +37,10 @@ class MainView {
   async.Stream<AppPortMapInfo> get onClieckAddPortMapButton => _controllerAddPortMapButton.stream;
   async.Stream<AppPortMapInfo> get onClieckDelPortMapButton => _controllerDelPortMapButton.stream;
 
+  ui.Html _globalIpBox = new ui.Html("");
+  List<AppPortMapInfo> portMapList = [];
+  List<AppNetworkInterface> networkInterfaceList = [];
+
   void clearFoundRouterList() {
     _foundRouter.clear();
   }
@@ -44,55 +48,10 @@ class MainView {
   void addFoundRouterList(String itemName) {
     _foundRouter.addItem(itemName);
   }
-
-  ui.Html _globalIpBox = new ui.Html("");
-
   void setGlobalIp(String ip) {
     _globalIpBox.text = ip;
   }
 
-  void updateInfoPanel() {
-    _infoForSubPanel.clear();
-
-    ui.FlexTable layout = new ui.FlexTable();
-    layout.setCellSpacing(6);
-    ui.FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
-    layout.setHtml(0, 0, "Information");
-    cellFormatter.setColSpan(0, 0, 2);
-    cellFormatter.setHorizontalAlignment(0, 0, i18n.HasHorizontalAlignment.ALIGN_CENTER);
-
-    layout.setHtml(1, 0, "Global IP:");
-    _globalIpBox.addStyleName("hetima-grid");
-    layout.setWidget(2, 1, _globalIpBox);
-
-    layout.setHtml(3, 0, "Local IP:");
-    {
-      ui.Grid grid = new ui.Grid(1 + portMapList.length, 5);
-      grid.addStyleName("cw-FlexTable");
-      grid.setWidget(0, 0, new ui.Html("IP"));
-      grid.setWidget(0, 1, new ui.Html("Length"));
-      {
-        int index = 0;
-        for (AppNetworkInterface i in networkInterfaceList) {
-          ui.Html l0 = new ui.Html("${i.ip}");
-          l0.addStyleName("hetima-grid");
-          ui.Html l1 = new ui.Html("${i.length}");
-          l1.addStyleName("hetima-grid");
-          grid.setWidget(index + 1, 0, l0);
-          grid.setWidget(index + 1, 1, l1);
-          index++;
-        }
-//        grid.setWidget(1, 1, widget);
-      }
-
-      layout.setWidget(4, 1, grid);
-    }
-
-    _infoForSubPanel.add(layout);
-  }
-
-  List<AppPortMapInfo> portMapList = [];
-  List<AppNetworkInterface> networkInterfaceList = [];
   void clearPortMappInfo() {
     portMapList.clear();
   }
@@ -281,6 +240,46 @@ class MainView {
       row++;
     }
     _otherForSubPanel.add(grid);
+  }
+
+  void updateInfoPanel() {
+    _infoForSubPanel.clear();
+
+    ui.FlexTable layout = new ui.FlexTable();
+    layout.setCellSpacing(6);
+    ui.FlexCellFormatter cellFormatter = layout.getFlexCellFormatter();
+    layout.setHtml(0, 0, "Information");
+    cellFormatter.setColSpan(0, 0, 2);
+    cellFormatter.setHorizontalAlignment(0, 0, i18n.HasHorizontalAlignment.ALIGN_CENTER);
+
+    layout.setHtml(1, 0, "Global IP:");
+    _globalIpBox.addStyleName("hetima-grid");
+    layout.setWidget(2, 1, _globalIpBox);
+
+    layout.setHtml(3, 0, "Local IP:");
+    {
+      ui.Grid grid = new ui.Grid(1 + networkInterfaceList.length, 5);
+      grid.addStyleName("cw-FlexTable");
+      grid.setWidget(0, 0, new ui.Html("IP"));
+      grid.setWidget(0, 1, new ui.Html("Length"));
+      {
+        int index = 0;
+        for (AppNetworkInterface i in networkInterfaceList) {
+          ui.Html l0 = new ui.Html("${i.ip}");
+          l0.addStyleName("hetima-grid");
+          ui.Html l1 = new ui.Html("${i.length}");
+          l1.addStyleName("hetima-grid");
+          grid.setWidget(index + 1, 0, l0);
+          grid.setWidget(index + 1, 1, l1);
+          index++;
+        }
+//        grid.setWidget(1, 1, widget);
+      }
+
+      layout.setWidget(4, 1, grid);
+    }
+
+    _infoForSubPanel.add(layout);
   }
 }
 

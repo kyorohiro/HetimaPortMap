@@ -3946,29 +3946,34 @@ var $$ = {};
 ["", "app.dart", , S, {
   "^": "",
   main: [function() {
+    S.setupUI();
+    S.setupUpnp();
+  }, "call$0", "main$closure", 0, 0, 13],
+  setupUI: function() {
     $.get$mainView().intialize$0();
     var t1 = $.get$mainView()._controllerSearchButton;
-    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.main_closure());
+    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.setupUI_closure());
     t1 = $.get$mainView()._controllerTab;
-    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.main_closure0());
+    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.setupUI_closure0());
     t1 = $.get$mainView()._controllerSelectRouter;
-    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.main_closure1());
+    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.setupUI_closure1());
     t1 = $.get$mainView()._controllerAddPortMapButton;
-    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.main_closure2());
+    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.setupUI_closure2());
     t1 = $.get$mainView()._controllerDelPortMapButton;
-    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.main_closure3());
-    S.setup();
-  }, "call$0", "main$closure", 0, 0, 13],
-  setup: function() {
-    V.UpnpDeviceSearcher_createInstance(new N.HetiSocketBuilderChrome()).then$1(new S.setup_closure());
+    H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new S.setupUI_closure3());
   },
-  getRouter: function() {
+  setupUpnp: function() {
+    V.UpnpDeviceSearcher_createInstance(new N.HetiSocketBuilderChrome()).then$1(new S.setupUpnp_closure());
+  },
+  getCurrentRouter: function() {
     var routerName, t1, t2, info;
     if ($.deviceSearcher.get$deviceInfoList().length <= 0)
       return;
     routerName = $.get$mainView().currentSelectRouter$0();
     for (t1 = $.deviceSearcher.get$deviceInfoList(), t1 = new H.ListIterator(t1, t1.length, 0, null), t2 = J.getInterceptor(routerName); t1.moveNext$0();) {
       info = t1._current;
+      if (info == null)
+        continue;
       if (t2.$eq(routerName, info.getValue$2("USN", "*")))
         return info;
     }
@@ -3977,89 +3982,98 @@ var $$ = {};
   startUpdateIpInfo: function() {
     if ($.deviceSearcher == null)
       return;
-    V.UPnpPPPDevice$(S.getRouter()).requestGetExternalIPAddress$0().then$1(new S.startUpdateIpInfo_closure()).catchError$1(new S.startUpdateIpInfo_closure0());
+    var info = S.getCurrentRouter();
+    if (info == null)
+      return;
+    V.UPnpPPPDevice$(info).requestGetExternalIPAddress$0().then$1(new S.startUpdateIpInfo_closure()).catchError$1(new S.startUpdateIpInfo_closure0());
     new N.HetiSocketBuilderChrome().getNetworkInterfaces$0().then$1(new S.startUpdateIpInfo_closure1());
   },
-  startUpdateList: function() {
+  startUpdatePortMappedList: function() {
     var t1, info;
     t1 = {};
     C.JSArray_methods.set$length($.get$mainView().portMapList, 0);
     if ($.deviceSearcher == null)
       return;
-    info = S.getRouter();
+    info = S.getCurrentRouter();
+    if (info == null)
+      return;
     $.deviceSearcher.get$deviceInfoList();
-    t1.index_0 = 0;
-    new S.startUpdateList_a(t1, V.UPnpPPPDevice$(info)).call$0();
+    t1.newPortmappingIndex_0 = 0;
+    new S.startUpdatePortMappedList_requestPortMapInfo(t1, V.UPnpPPPDevice$(info)).call$0();
   },
-  startSearchDevice: function() {
+  startSearchPPPDevice: function() {
     if ($.deviceSearcher == null)
       return;
-    J._clearChildren$0$x(H.interceptedTypeCast($.get$mainView()._foundRouter._dart_web_toolkit_ui$_element, "$isSelectElement"));
-    $.deviceSearcher.searchWanPPPDevice$0().then$1(new S.startSearchDevice_closure());
+    J._clearChildren$0$x(H.interceptedTypeCast($.get$mainView()._foundRouter._element, "$isSelectElement"));
+    $.deviceSearcher.searchWanPPPDevice$0().then$1(new S.startSearchPPPDevice_closure());
   },
   startAddPortMapp: function(i) {
-    V.UPnpPPPDevice$(S.getRouter()).requestAddPortMapping$7(H.Primitives_parseInt(i.get$publicPort(), null, null), J.get$protocol$x(i), H.Primitives_parseInt(i.get$localPort(), null, null), i.get$localIp(), 1, i.get$description(), 0).then$1(new S.startAddPortMapp_closure()).catchError$1(new S.startAddPortMapp_closure0());
+    var info = S.getCurrentRouter();
+    if (info == null)
+      return;
+    V.UPnpPPPDevice$(info).requestAddPortMapping$7(H.Primitives_parseInt(i.get$publicPort(), null, null), J.get$protocol$x(i), H.Primitives_parseInt(i.get$localPort(), null, null), i.get$localIp(), 1, i.get$description(), 0).then$1(new S.startAddPortMapp_closure()).catchError$1(new S.startAddPortMapp_closure0());
   },
-  startDellPortMapp: function(i) {
-    V.UPnpPPPDevice$(S.getRouter()).requestDeletePortMapping$2(H.Primitives_parseInt(i.get$publicPort(), null, null), J.get$protocol$x(i)).then$1(new S.startDellPortMapp_closure()).catchError$1(new S.startDellPortMapp_closure0());
+  startDeletePortMapp: function(i) {
+    var info = S.getCurrentRouter();
+    if (info == null)
+      return;
+    V.UPnpPPPDevice$(info).requestDeletePortMapping$2(H.Primitives_parseInt(i.get$publicPort(), null, null), J.get$protocol$x(i)).then$1(new S.startDeletePortMapp_closure()).catchError$1(new S.startDeletePortMapp_closure0());
   },
-  main_closure: {
+  setupUI_closure: {
     "^": "Closure:56;",
     call$1: [function(v) {
-      P.print("###a");
-      S.startSearchDevice();
+      P.print("### search router");
+      S.startSearchPPPDevice();
     }, "call$1", null, 2, 0, null, 55, "call"],
     $isFunction: true
   },
-  main_closure0: {
+  setupUI_closure0: {
     "^": "Closure:56;",
     call$1: [function(v) {
-      var t1 = J.getInterceptor(v);
+      var t1;
+      P.print("### select tag " + H.S(v));
+      t1 = J.getInterceptor(v);
       if (t1.$eq(v, 0))
-        P.print("### main");
-      else if (t1.$eq(v, 1)) {
-        P.print("### list");
-        S.startUpdateList();
-      } else if (t1.$eq(v, 2)) {
-        P.print("### info");
+        ;
+      else if (t1.$eq(v, 1))
+        S.startUpdatePortMappedList();
+      else if (t1.$eq(v, 2))
         S.startUpdateIpInfo();
-      } else
-        P.print("### other");
     }, "call$1", null, 2, 0, null, 55, "call"],
     $isFunction: true
   },
-  main_closure1: {
+  setupUI_closure1: {
     "^": "Closure:3;",
     call$1: [function(v) {
-      P.print(C.JSString_methods.$add("### r ", v));
+      P.print("### select router " + H.S(v));
     }, "call$1", null, 2, 0, null, 55, "call"],
     $isFunction: true
   },
-  main_closure2: {
+  setupUI_closure2: {
     "^": "Closure:58;",
     call$1: [function(i) {
-      P.print(C.JSString_methods.$add("### p ", i.get$description()));
+      P.print("### add port map " + H.S(i.get$description()));
       S.startAddPortMapp(i);
     }, "call$1", null, 2, 0, null, 57, "call"],
     $isFunction: true
   },
-  main_closure3: {
+  setupUI_closure3: {
     "^": "Closure:58;",
     call$1: [function(i) {
-      P.print(C.JSString_methods.$add("### d ", i.get$description()));
-      S.startDellPortMapp(i);
+      P.print("### del port map " + H.S(i.get$description()));
+      S.startDeletePortMapp(i);
     }, "call$1", null, 2, 0, null, 57, "call"],
     $isFunction: true
   },
-  setup_closure: {
+  setupUpnp_closure: {
     "^": "Closure:60;",
     call$1: [function(searcher) {
       $.deviceSearcher = searcher;
-      searcher.onReceive$0().listen$1(new S.setup__closure());
+      searcher.onReceive$0().listen$1(new S.setupUpnp__closure());
     }, "call$1", null, 2, 0, null, 59, "call"],
     $isFunction: true
   },
-  setup__closure: {
+  setupUpnp__closure: {
     "^": "Closure:62;",
     call$1: [function(info) {
       var t1, t2;
@@ -4105,16 +4119,16 @@ var $$ = {};
     }, "call$1", null, 2, 0, null, 64, "call"],
     $isFunction: true
   },
-  startUpdateList_a: {
+  startUpdatePortMappedList_requestPortMapInfo: {
     "^": "Closure:50;box_0,pppDevice_1",
     call$0: function() {
       var t1 = this.box_0;
-      this.pppDevice_1.requestGetGenericPortMapping$1(t1.index_0).then$1(new S.startUpdateList_a_closure(t1, this)).catchError$1(new S.startUpdateList_a_closure0());
+      this.pppDevice_1.requestGetGenericPortMapping$1(t1.newPortmappingIndex_0).then$1(new S.startUpdatePortMappedList_requestPortMapInfo_closure(t1, this)).catchError$1(new S.startUpdatePortMappedList_requestPortMapInfo_closure0());
     },
     $isFunction: true
   },
-  startUpdateList_a_closure: {
-    "^": "Closure:67;box_0,a_2",
+  startUpdatePortMappedList_requestPortMapInfo_closure: {
+    "^": "Closure:67;box_0,requestPortMapInfo_2",
     call$1: [function(r) {
       var portMapInfo, t1, t2;
       if (!J.$eq(r.get$resultCode(), 200))
@@ -4132,22 +4146,22 @@ var $$ = {};
       t1 = $.get$mainView();
       t1.portMapList.push(portMapInfo);
       t1.updateRouterList$0();
-      ++this.box_0.index_0;
-      this.a_2.call$0();
+      ++this.box_0.newPortmappingIndex_0;
+      this.requestPortMapInfo_2.call$0();
     }, "call$1", null, 2, 0, null, 66, "call"],
     $isFunction: true
   },
-  startUpdateList_a_closure0: {
+  startUpdatePortMappedList_requestPortMapInfo_closure0: {
     "^": "Closure:20;",
     call$1: [function(e) {
     }, "call$1", null, 2, 0, null, 2, "call"],
     $isFunction: true
   },
-  startSearchDevice_closure: {
+  startSearchPPPDevice_closure: {
     "^": "Closure:56;",
     call$1: [function(v) {
       var t1, info, t2, t3;
-      J._clearChildren$0$x(H.interceptedTypeCast($.get$mainView()._foundRouter._dart_web_toolkit_ui$_element, "$isSelectElement"));
+      J._clearChildren$0$x(H.interceptedTypeCast($.get$mainView()._foundRouter._element, "$isSelectElement"));
       for (t1 = $.deviceSearcher.get$deviceInfoList(), t1 = new H.ListIterator(t1, t1.length, 0, null); t1.moveNext$0();) {
         info = t1._current;
         t2 = $.get$mainView();
@@ -4176,7 +4190,7 @@ var $$ = {};
     }, "call$1", null, 2, 0, null, 2, "call"],
     $isFunction: true
   },
-  startDellPortMapp_closure: {
+  startDeletePortMapp_closure: {
     "^": "Closure:56;",
     call$1: [function(v) {
       var dialogBox = Z.createDialogBox("#### Port Map ####", B.Html$(!J.$eq(v, 200) ? " OK resultCode = " + H.S(v) : "OK", null));
@@ -4185,7 +4199,7 @@ var $$ = {};
     }, "call$1", null, 2, 0, null, 55, "call"],
     $isFunction: true
   },
-  startDellPortMapp_closure0: {
+  startDeletePortMapp_closure0: {
     "^": "Closure:20;",
     call$1: [function(e) {
       var dialogBox = Z.createDialogBox("#### ERROR ####", B.Html$("failed add port mapping", null));
@@ -4222,7 +4236,7 @@ var $$ = {};
   ChromeSocketsTcp: {
     "^": "ChromeApi;_onReceive,_onReceiveError",
     get$onReceive: function() {
-      var t1 = this._onReceive._common$_controller;
+      var t1 = this._onReceive._controller;
       return H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]);
     },
     onReceive$0: function() {
@@ -4321,7 +4335,7 @@ var $$ = {};
   ChromeSocketsUdp: {
     "^": "ChromeApi;_onReceive,_onReceiveError",
     get$onReceive: function() {
-      var t1 = this._onReceive._common$_controller;
+      var t1 = this._onReceive._controller;
       return H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]);
     },
     onReceive$0: function() {
@@ -4467,7 +4481,7 @@ var $$ = {};
     $isFunction: true
   },
   ChromeStreamController: {
-    "^": "Object;_apiProvider,_eventName,_common$_controller,_handlerAdded,_listener",
+    "^": "Object;_apiProvider,_eventName,_controller,_handlerAdded,_listener",
     _apiProvider$0: function() {
       return this._apiProvider.call$0();
     },
@@ -4491,12 +4505,12 @@ var $$ = {};
     }, "call$0", "get$_removeHandler", 0, 0, 13],
     ChromeStreamController$noArgs$2: function(_apiProvider, _eventName, $T) {
       var t1 = this.get$_ensureHandlerAdded();
-      this._common$_controller = P.StreamController_StreamController$broadcast(this.get$_removeHandler(), t1, false, $T);
+      this._controller = P.StreamController_StreamController$broadcast(this.get$_removeHandler(), t1, false, $T);
       this._listener = new F.ChromeStreamController$noArgs_closure(this);
     },
     ChromeStreamController$oneArg$4: function(_apiProvider, _eventName, transformer, returnVal, $T) {
       var t1 = this.get$_ensureHandlerAdded();
-      this._common$_controller = P.StreamController_StreamController$broadcast(this.get$_removeHandler(), t1, false, $T);
+      this._controller = P.StreamController_StreamController$broadcast(this.get$_removeHandler(), t1, false, $T);
       this._listener = new F.ChromeStreamController$oneArg_closure(this, transformer, returnVal);
     },
     static: {ChromeStreamController$noArgs: function(_apiProvider, _eventName, $T) {
@@ -4512,7 +4526,7 @@ var $$ = {};
   ChromeStreamController$noArgs_closure: {
     "^": "Closure:50;this_0",
     call$0: [function() {
-      var t1 = this.this_0._common$_controller;
+      var t1 = this.this_0._controller;
       if (t1._state >= 4)
         H.throwExpression(t1._addEventError$0());
       t1._sendData$1(null);
@@ -4523,7 +4537,7 @@ var $$ = {};
     "^": "Closure:68;this_0,transformer_1,returnVal_2",
     call$1: [function(arg1) {
       var t1, t2;
-      t1 = this.this_0._common$_controller;
+      t1 = this.this_0._controller;
       t2 = this.transformer_1.call$1(arg1);
       if (t1._state >= 4)
         H.throwExpression(t1._addEventError$0());
@@ -5691,12 +5705,12 @@ var $$ = {};
       }}
   },
   _BroadcastStream: {
-    "^": "_ControllerStream;_controller"
+    "^": "_ControllerStream;_async$_controller"
   },
   _BroadcastSubscription: {
-    "^": "_ControllerSubscription;_eventState@,_async$_next@,_async$_previous@,_controller,_onData,_onError,_onDone,_zone,_state,_cancelFuture,_pending",
-    get$_controller: function() {
-      return this._controller;
+    "^": "_ControllerSubscription;_eventState@,_async$_next@,_async$_previous@,_async$_controller,_onData,_onError,_onDone,_zone,_state,_cancelFuture,_pending",
+    get$_async$_controller: function() {
+      return this._async$_controller;
     },
     _expectsEvent$1: function(eventId) {
       var t1 = this._eventState;
@@ -6068,7 +6082,7 @@ var $$ = {};
       this._addListener$1(result);
       return result;
     },
-    get$_value: function() {
+    get$_async$_value: function() {
       return this._resultOrListeners;
     },
     get$_error: function() {
@@ -6228,7 +6242,7 @@ var $$ = {};
             return;
           }
           t3.listenerHasValue_1 = true;
-          sourceValue = t1.source_4.get$_hasValue() ? t1.source_4.get$_value() : null;
+          sourceValue = t1.source_4.get$_hasValue() ? t1.source_4.get$_async$_value() : null;
           t3.listenerValueOrError_2 = sourceValue;
           t3.isPropagationAborted_3 = false;
           t2 = !hasError;
@@ -6897,12 +6911,12 @@ var $$ = {};
     }
   },
   _ControllerStream: {
-    "^": "_StreamImpl;_controller",
+    "^": "_StreamImpl;_async$_controller",
     _createSubscription$4: function(onData, onError, onDone, cancelOnError) {
-      return this._controller._subscribe$4(onData, onError, onDone, cancelOnError);
+      return this._async$_controller._subscribe$4(onData, onError, onDone, cancelOnError);
     },
     get$hashCode: function(_) {
-      return (H.Primitives_objectHashCode(this._controller) ^ 892482866) >>> 0;
+      return (H.Primitives_objectHashCode(this._async$_controller) ^ 892482866) >>> 0;
     },
     $eq: function(_, other) {
       if (other == null)
@@ -6911,20 +6925,20 @@ var $$ = {};
         return true;
       if (!J.getInterceptor(other).$is_ControllerStream)
         return false;
-      return other._controller === this._controller;
+      return other._async$_controller === this._async$_controller;
     },
     $is_ControllerStream: true
   },
   _ControllerSubscription: {
-    "^": "_BufferingStreamSubscription;_controller<,_onData,_onError,_onDone,_zone,_state,_cancelFuture,_pending",
+    "^": "_BufferingStreamSubscription;_async$_controller<,_onData,_onError,_onDone,_zone,_state,_cancelFuture,_pending",
     _onCancel$0: function() {
-      return this.get$_controller()._recordCancel$1(this);
+      return this.get$_async$_controller()._recordCancel$1(this);
     },
     _onPause$0: [function() {
-      this.get$_controller()._recordPause$1(this);
+      this.get$_async$_controller()._recordPause$1(this);
     }, "call$0", "get$_onPause", 0, 0, 13],
     _onResume$0: [function() {
-      this.get$_controller()._recordResume$1(this);
+      this.get$_async$_controller()._recordResume$1(this);
     }, "call$0", "get$_onResume", 0, 0, 13]
   },
   _EventSink: {
@@ -7367,11 +7381,11 @@ var $$ = {};
       t4._ForwardingStreamSubscription$5(this, onData, onError, onDone, cancelOnError, t1, t2);
       return t4;
     },
-    listen$3$onDone$onError: function(onData, onDone, onError) {
-      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
-    },
     listen$1: function(onData) {
       return this.listen$4$cancelOnError$onDone$onError(onData, null, null, null);
+    },
+    listen$3$onDone$onError: function(onData, onDone, onError) {
+      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
     },
     _handleData$2: function(data, sink) {
       sink._async$_add$1(data);
@@ -11162,12 +11176,12 @@ var $$ = {};
     }
   },
   _ChildrenElementList: {
-    "^": "ListBase;_element,_childElements",
+    "^": "ListBase;_html$_element,_childElements",
     contains$1: function(_, element) {
       return J.contains$1$asx(this._childElements, element);
     },
     get$isEmpty: function(_) {
-      return this._element.firstElementChild == null;
+      return this._html$_element.firstElementChild == null;
     },
     get$length: function(_) {
       return this._childElements.length;
@@ -11182,13 +11196,13 @@ var $$ = {};
       var t1 = this._childElements;
       if (index >>> 0 !== index || index >= t1.length)
         return H.ioore(t1, index);
-      this._element.replaceChild(value, t1[index]);
+      this._html$_element.replaceChild(value, t1[index]);
     },
     set$length: function(_, newLength) {
       throw H.wrapException(P.UnsupportedError$("Cannot resize element lists"));
     },
     add$1: function(_, value) {
-      this._element.appendChild(value);
+      this._html$_element.appendChild(value);
       return value;
     },
     get$iterator: function(_) {
@@ -11197,7 +11211,7 @@ var $$ = {};
     },
     addAll$1: function(_, iterable) {
       var t1, t2;
-      for (t1 = J.get$iterator$ax(!!J.getInterceptor(iterable).$is_ChildNodeListLazy ? P.List_List$from(iterable, true, null) : iterable), t2 = this._element; t1.moveNext$0();)
+      for (t1 = J.get$iterator$ax(!!J.getInterceptor(iterable).$is_ChildNodeListLazy ? P.List_List$from(iterable, true, null) : iterable), t2 = this._html$_element; t1.moveNext$0();)
         t2.appendChild(t1.get$current());
     },
     setRange$4: function(_, start, end, iterable, skipCount) {
@@ -11212,11 +11226,11 @@ var $$ = {};
       if (index < 0 || index >= t1.length)
         return H.ioore(t1, index);
       result = t1[index];
-      this._element.removeChild(result);
+      this._html$_element.removeChild(result);
       return result;
     },
     get$first: function(_) {
-      var result = this._element.firstElementChild;
+      var result = this._html$_element.firstElementChild;
       if (result == null)
         throw H.wrapException(P.StateError$("No elements"));
       return result;
@@ -11509,7 +11523,7 @@ var $$ = {};
     },
     get$keys: function() {
       var attributes, keys, len, i;
-      attributes = this._element.attributes;
+      attributes = this._html$_element.attributes;
       keys = H.setRuntimeTypeInfo([], [P.String]);
       for (len = attributes.length, i = 0; i < len; ++i) {
         if (i >= attributes.length)
@@ -11524,7 +11538,7 @@ var $$ = {};
     },
     get$values: function(_) {
       var attributes, values, len, i;
-      attributes = this._element.attributes;
+      attributes = this._html$_element.attributes;
       values = H.setRuntimeTypeInfo([], [P.String]);
       for (len = attributes.length, i = 0; i < len; ++i) {
         if (i >= attributes.length)
@@ -11546,19 +11560,19 @@ var $$ = {};
     }
   },
   _ElementAttributeMap: {
-    "^": "_AttributeMap;_element",
+    "^": "_AttributeMap;_html$_element",
     containsKey$1: function(key) {
-      return this._element.hasAttribute(key);
+      return this._html$_element.hasAttribute(key);
     },
     $index: function(_, key) {
-      return this._element.getAttribute(key);
+      return this._html$_element.getAttribute(key);
     },
     $indexSet: function(_, key, value) {
-      this._element.setAttribute(key, value);
+      this._html$_element.setAttribute(key, value);
     },
     remove$1: function(_, key) {
       var t1, value;
-      t1 = this._element;
+      t1 = this._html$_element;
       value = t1.getAttribute(key);
       t1.removeAttribute(key);
       return value;
@@ -11573,18 +11587,18 @@ var $$ = {};
   _DataAttributeMap: {
     "^": "Object;_attributes",
     containsKey$1: function(key) {
-      return this._attributes._element.hasAttribute("data-" + this._toHyphenedName$1(key));
+      return this._attributes._html$_element.hasAttribute("data-" + this._toHyphenedName$1(key));
     },
     $index: function(_, key) {
-      return this._attributes._element.getAttribute("data-" + this._toHyphenedName$1(key));
+      return this._attributes._html$_element.getAttribute("data-" + this._toHyphenedName$1(key));
     },
     $indexSet: function(_, key, value) {
-      this._attributes._element.setAttribute("data-" + this._toHyphenedName$1(key), value);
+      this._attributes._html$_element.setAttribute("data-" + this._toHyphenedName$1(key), value);
     },
     remove$1: function(_, key) {
       var t1, t2, value;
       t1 = "data-" + this._toHyphenedName$1(key);
-      t2 = this._attributes._element;
+      t2 = this._attributes._html$_element;
       value = t2.getAttribute(t1);
       t2.removeAttribute(t1);
       return value;
@@ -11706,11 +11720,11 @@ var $$ = {};
       t1._tryResume$0();
       return t1;
     },
-    listen$3$onDone$onError: function(onData, onDone, onError) {
-      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
-    },
     listen$1: function(onData) {
       return this.listen$4$cancelOnError$onDone$onError(onData, null, null, null);
+    },
+    listen$3$onDone$onError: function(onData, onDone, onError) {
+      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
     }
   },
   _ElementEventStreamImpl: {
@@ -11731,11 +11745,11 @@ var $$ = {};
       t1.toString;
       return H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError);
     },
-    listen$3$onDone$onError: function(onData, onDone, onError) {
-      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
-    },
     listen$1: function(onData) {
       return this.listen$4$cancelOnError$onDone$onError(onData, null, null, null);
+    },
+    listen$3$onDone$onError: function(onData, onDone, onError) {
+      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
     }
   },
   _EventStreamSubscription: {
@@ -11967,7 +11981,7 @@ var $$ = {};
         return true;
       if (attributeName === "template" && value === "")
         return true;
-      if (J.get$attributes$x(element)._element.getAttribute("template") === "")
+      if (J.get$attributes$x(element)._html$_element.getAttribute("template") === "")
         return this._templateAttrs.contains$1(0, attributeName);
       return false;
     },
@@ -12125,7 +12139,7 @@ var $$ = {};
             t1.remove$0(node);
             break;
           }
-          t2 = attrs._element;
+          t2 = attrs._html$_element;
           isAttr = t2.getAttribute("is");
           if (isAttr != null)
             if (!this.validator.allowsAttribute$3(node, "is", isAttr)) {
@@ -13367,10 +13381,10 @@ var $$ = {};
     return elem.getAttribute(prop);
   },
   Dom_setElementProperty: function(elem, prop, value) {
-    J.get$attributes$x(elem)._element.setAttribute(prop, value);
+    J.get$attributes$x(elem)._html$_element.setAttribute(prop, value);
   },
   Dom_setElementPropertyInt: function(elem, prop, value) {
-    J.get$attributes$x(elem)._element.setAttribute(prop, J.toString$0(value));
+    J.get$attributes$x(elem)._html$_element.setAttribute(prop, J.toString$0(value));
   },
   Dom_dispatchEvent: function(evt, elem, listener) {
     var prevCurrentEvent, t1;
@@ -13474,9 +13488,6 @@ var $$ = {};
     },
     getAssociatedType$0: function() {
       return $.get$BeforeSelectionEvent_TYPE();
-    },
-    isCanceled$0: function() {
-      return this._canceled;
     },
     dispatch$1: function(handler) {
       handler.onBeforeSelection$1(this);
@@ -14378,8 +14389,8 @@ var $$ = {};
         t1.toString;
         $.get$BidiUtils__INSTANCE().toString;
         dir = t1.estimateDirection$1(t2);
-        if (dir !== A.BidiUtils_getDirectionOnElement(this.target._dart_web_toolkit_ui$_element))
-          A.BidiUtils_setDirectionOnElement(this.target._dart_web_toolkit_ui$_element, dir);
+        if (dir !== A.BidiUtils_getDirectionOnElement(this.target._element))
+          A.BidiUtils_setDirectionOnElement(this.target._element, dir);
       }
     },
     setDirectionEstimator$1: function(directionEstimator) {
@@ -14425,7 +14436,7 @@ var $$ = {};
       }}
   },
   Direction: {
-    "^": "Enum;_dart_web_toolkit_util$_value",
+    "^": "Enum;_value",
     static: {"^": "Direction_RTL0,Direction_LTR0,Direction_DEFAULT0"}
   },
   DirectionalTextHelper: {
@@ -14684,7 +14695,7 @@ var $$ = {};
     elem.className = C.JSArray_methods.join$1(classes, " ");
   },
   Html: {
-    "^": "Label;_editor,directionalTextHelper,_autoHorizontalAlignment,_horzAlign,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "Label;_editor,directionalTextHelper,_autoHorizontalAlignment,_horzAlign,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     Html$2: function(html, wordWrap) {
       this.getStyleElement$0().className = "dwt-HTML";
       if (html != null) {
@@ -14707,7 +14718,7 @@ var $$ = {};
   AbsolutePanel: {
     "^": "ComplexPanel;",
     add$1: function(_, w) {
-      B.ComplexPanel.prototype.addWidget$2.call(this, w, this._dart_web_toolkit_ui$_element);
+      B.ComplexPanel.prototype.addWidget$2.call(this, w, this._element);
     },
     remove$1: function(_, w) {
       var removed, t1;
@@ -14724,11 +14735,11 @@ var $$ = {};
       var t1;
       if (elem == null) {
         t1 = document.createElement("div", null);
-        this._dart_web_toolkit_ui$_element = t1;
+        this._element = t1;
         J.set$position$x(t1.style, "relative");
-        J.set$overflow$x(this._dart_web_toolkit_ui$_element.style, "hidden");
+        J.set$overflow$x(this._element.style, "hidden");
       } else
-        this._dart_web_toolkit_ui$_element = elem;
+        this._element = elem;
     }
   },
   TakesValueEditor: {
@@ -14778,10 +14789,10 @@ var $$ = {};
     }
   },
   Button: {
-    "^": "ButtonBase;eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "ButtonBase;eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     Button$2: function(html, handler) {
       this.getStyleElement$0().className = "dwt-Button";
-      J.set$innerHtml$x(this._dart_web_toolkit_ui$_element, html);
+      J.set$innerHtml$x(this._element, html);
       this.addDomHandler$2(handler, $.get$ClickEvent_TYPE());
     },
     static: {Button$: function(html, handler) {
@@ -14789,7 +14800,7 @@ var $$ = {};
         t1 = document.createElement("button", null);
         t2 = new B.Button(0, null, false, null, null, null);
         if (t1 != null)
-          t2._dart_web_toolkit_ui$_element = t1;
+          t2._element = t1;
         t2.Button$2(html, handler);
         return t2;
       }}
@@ -14797,26 +14808,26 @@ var $$ = {};
   ButtonBase: {
     "^": "FocusWidget;",
     get$text: function(_) {
-      return this._dart_web_toolkit_ui$_element.textContent;
+      return this._element.textContent;
     }
   },
   CellPanel: {
     "^": "ComplexPanel;",
     getWidgetTd$1: function(w) {
-      if (w._dart_web_toolkit_ui$_parent !== this)
+      if (w._parent !== this)
         return;
-      return w._dart_web_toolkit_ui$_element.parentElement;
+      return w._element.parentElement;
     },
     setWidgetCellHorizontalAlignment$2: function(w, align) {
       var td = this.getWidgetTd$1(w);
       if (td != null)
-        J.set$textAlign$x(td.style, align._textAlign._dart_web_toolkit_util$_value);
+        J.set$textAlign$x(td.style, align._textAlign._value);
     },
     CellPanel$0: function() {
       var t1 = document.createElement("table", null);
       this._table = t1;
       this._body = J.createTBody$0$x(t1);
-      this._dart_web_toolkit_ui$_element = this._table;
+      this._element = this._table;
     }
   },
   CheckBox: {
@@ -14883,8 +14894,8 @@ var $$ = {};
       var t1, uid;
       this.inputElem = element;
       this.labelElem = document.createElement("label", null);
-      this._dart_web_toolkit_ui$_element.appendChild(this.inputElem);
-      this._dart_web_toolkit_ui$_element.appendChild(this.labelElem);
+      this._element.appendChild(this.inputElem);
+      this._element.appendChild(this.labelElem);
       t1 = $.Dom_uniqueId;
       $.Dom_uniqueId = t1 + 1;
       uid = "dwt-id-" + t1;
@@ -14938,12 +14949,12 @@ var $$ = {};
       if (container == null)
         throw H.wrapException(P.Exception_Exception("container may not be null"));
       this.checkIndexBoundsForInsertion$1(beforeIndex);
-      if (child._dart_web_toolkit_ui$_parent === this)
+      if (child._parent === this)
         if (this._children.indexOf$1(0, child) < beforeIndex)
           --beforeIndex;
       child.removeFromParent$0();
       this._children.insert$2(0, child, beforeIndex);
-      t1 = child._dart_web_toolkit_ui$_element;
+      t1 = child._element;
       if (domInsert)
         $.get$Dom_impl().insertChild$3(container, t1, beforeIndex);
       else
@@ -14967,7 +14978,7 @@ var $$ = {};
       if (this._widget != null)
         throw H.wrapException(P.Exception_Exception("Composite.initWidget() may only be called once."));
       widget.removeFromParent$0();
-      this._dart_web_toolkit_ui$_element = widget._dart_web_toolkit_ui$_element;
+      this._element = widget._element;
       this._widget = widget;
       widget.setParent$1(this);
     },
@@ -14978,7 +14989,7 @@ var $$ = {};
         this.eventsToSink = -1;
       }
       this._widget.onAttach$0();
-      t1 = this._dart_web_toolkit_ui$_element;
+      t1 = this._element;
       $.get$Dom_impl()._dart_web_toolkit_event$_listener.$indexSet(0, t1, this);
       Q.AttachEvent_fire(this, true);
     },
@@ -15036,7 +15047,7 @@ var $$ = {};
     }
   },
   DecoratorPanel: {
-    "^": "SimplePanel;_containerElem,_tbody,widget,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "SimplePanel;_containerElem,_tbody,widget,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     getCellElement$2: function(row, cell) {
       return J.get$firstChild$x(J.$index$asx(J.get$children$x(J.$index$asx(J.get$children$x(this._tbody), row)), cell));
     },
@@ -15045,7 +15056,7 @@ var $$ = {};
     },
     DecoratorPanel$2: function(rowStyles, containerIndex) {
       var table, t1, i, trElem;
-      table = this._dart_web_toolkit_ui$_element;
+      table = this._element;
       t1 = J.createTBody$0$x(table);
       this._tbody = t1;
       table.appendChild(t1);
@@ -15075,13 +15086,13 @@ var $$ = {};
         return tdElem;
       }, DecoratorPanel$: function(rowStyles, containerIndex) {
         var t1 = new B.DecoratorPanel(null, null, null, 0, null, false, null, null, null);
-        t1._dart_web_toolkit_ui$_element = document.createElement("table", null);
+        t1._element = document.createElement("table", null);
         t1.DecoratorPanel$2(rowStyles, containerIndex);
         return t1;
       }}
   },
   DialogBox: {
-    "^": "DecoratedPopupPanel;caption,dragging,dragStartX,dragStartY,windowWidth,clientLeft,clientTop,resizeHandlerRegistration,_decPanel,glassResizer,animType,autoHide,previewAllNativeEvents,modal,showing,autoHideOnHistoryEvents,autoHidePartners,desiredHeight,desiredWidth,glass,glassStyleName,_isGlassEnabled,_isAnimationEnabled,leftPosition,nativePreviewHandlerRegistration,historyHandlerRegistration,resizeAnimation,topPosition,widget,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "DecoratedPopupPanel;caption,dragging,dragStartX,dragStartY,windowWidth,clientLeft,clientTop,resizeHandlerRegistration,_decPanel,glassResizer,animType,autoHide,previewAllNativeEvents,modal,showing,autoHideOnHistoryEvents,autoHidePartners,desiredHeight,desiredWidth,glass,glassStyleName,_isGlassEnabled,_isAnimationEnabled,leftPosition,nativePreviewHandlerRegistration,historyHandlerRegistration,resizeAnimation,topPosition,widget,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     get$text: function(_) {
       return this.caption.directionalTextHelper.getTextOrHtml$1(false);
     },
@@ -15112,13 +15123,13 @@ var $$ = {};
       var t1, t2, absX, absY;
       if (this.dragging) {
         t1 = $event.getX$0();
-        t2 = this._dart_web_toolkit_ui$_element;
+        t2 = this._element;
         t2 = $.get$Dom_impl().getAbsoluteLeft$1(t2);
         if (typeof t1 !== "number")
           return t1.$add();
         absX = t1 + t2;
         t2 = $event.getY$0();
-        t1 = this._dart_web_toolkit_ui$_element;
+        t1 = this._element;
         t1 = $.get$Dom_impl().getAbsoluteTop$1(t1);
         if (typeof t2 !== "number")
           return t2.$add();
@@ -15195,7 +15206,7 @@ var $$ = {};
       captionWidget.getStyleElement$0().className = "Caption";
       captionWidget.removeFromParent$0();
       this.caption = captionWidget;
-      J.append$1$x(this._decPanel.getCellElement$2(0, 1), this.caption._dart_web_toolkit_ui$_element);
+      J.append$1$x(this._decPanel.getCellElement$2(0, 1), this.caption._element);
       this.caption.setParent$1(this);
       this.getStyleElement$0().className = "dwt-DialogBox";
       this.windowWidth = window.innerWidth;
@@ -15227,7 +15238,7 @@ var $$ = {};
       t1 = this.this_0;
       if ($.Dom__sCaptureElem == null) {
         t1.dragging = true;
-        t2 = t1._dart_web_toolkit_ui$_element;
+        t2 = t1._element;
         $.Dom__sCaptureElem = t2;
         t3 = $.get$Dom_impl();
         t3.maybeInitializeEventSystem$0();
@@ -15244,7 +15255,7 @@ var $$ = {};
       var t1, t2, t3;
       t1 = this.this_1;
       t1.dragging = false;
-      t1 = t1._dart_web_toolkit_ui$_element;
+      t1 = t1._element;
       t2 = $.Dom__sCaptureElem;
       if (t2 != null && (t1 == null ? t2 == null : t1 === t2))
         $.Dom__sCaptureElem = null;
@@ -15276,10 +15287,10 @@ var $$ = {};
     $isFunction: true
   },
   DialogBoxCaptionImpl: {
-    "^": "Html;_editor,directionalTextHelper,_autoHorizontalAlignment,_horzAlign,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element"
+    "^": "Html;_editor,directionalTextHelper,_autoHorizontalAlignment,_horzAlign,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element"
   },
   FlexTable: {
-    "^": "HtmlTable;bodyElem,cellFormatter,columnFormatter,rowFormatter,tableElem,widgetMap,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "HtmlTable;bodyElem,cellFormatter,columnFormatter,rowFormatter,tableElem,widgetMap,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     getCellCount$1: function(row) {
       var rowSize = this.getRowCount$0();
       if (row >= rowSize || row < 0)
@@ -15336,14 +15347,14 @@ var $$ = {};
     get$tabIndex: function(_) {
       var t1, t2;
       t1 = $.get$FocusWidget_impl();
-      t2 = this._dart_web_toolkit_ui$_element;
+      t2 = this._element;
       t1.toString;
       return t2.tabIndex;
     },
     set$tabIndex: function(_, index) {
       var t1, t2;
       t1 = $.get$FocusWidget_impl();
-      t2 = this._dart_web_toolkit_ui$_element;
+      t2 = this._element;
       t1.toString;
       t2.toString;
       t2.setAttribute("tabIndex", C.JSInt_methods.toString$0(index));
@@ -15355,7 +15366,7 @@ var $$ = {};
     }
   },
   Grid: {
-    "^": "HtmlTable;numColumns,numRows,bodyElem,cellFormatter,columnFormatter,rowFormatter,tableElem,widgetMap,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "HtmlTable;numColumns,numRows,bodyElem,cellFormatter,columnFormatter,rowFormatter,tableElem,widgetMap,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     getCellCount$1: function(row) {
       return this.numColumns;
     },
@@ -15445,7 +15456,7 @@ var $$ = {};
       }}
   },
   HorizontalPanel: {
-    "^": "CellPanel;_horzAlign,_vertAlign,_tableRow,_spacing,_table,_body,_children,_orphanCommand,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "CellPanel;_horzAlign,_vertAlign,_tableRow,_spacing,_table,_body,_children,_orphanCommand,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     add$1: function(_, w) {
       var td = this._createAlignedTd$0();
       this._tableRow.appendChild(td);
@@ -15463,7 +15474,7 @@ var $$ = {};
       var td, t1;
       td = document.createElement("td", null);
       t1 = this._horzAlign;
-      J.set$textAlign$x(td.style, t1._textAlign._dart_web_toolkit_util$_value);
+      J.set$textAlign$x(td.style, t1._textAlign._value);
       t1 = this._vertAlign;
       J.set$verticalAlign$x(td.style, t1._verticalAlignString);
       return td;
@@ -15531,11 +15542,11 @@ var $$ = {};
         t3[index] = widget;
         t1.freeList = t1.freeList.get$next();
       }
-      t1 = widget._dart_web_toolkit_ui$_element;
+      t1 = widget._element;
       t1.toString;
       t2 = J.toString$0(index);
       t1.setAttribute("data-" + new W._DataAttributeMap(new W._ElementAttributeMap(t1))._toHyphenedName$1("uiObjectID"), t2);
-      td.appendChild(widget._dart_web_toolkit_ui$_element);
+      td.appendChild(widget._element);
       widget.setParent$1(this);
     },
     checkRowBounds$1: function(row) {
@@ -15647,14 +15658,14 @@ var $$ = {};
       t1 = J.createTBody$0$x(t1);
       this.bodyElem = t1;
       this.tableElem.appendChild(t1);
-      this._dart_web_toolkit_ui$_element = this.tableElem;
+      this._element = this.tableElem;
     }
   },
   CellFormatter: {
     "^": "Object;_table",
     setHorizontalAlignment$3: function(row, column, align) {
       this._table.prepareCell$2(row, column);
-      Q.Dom_setElementProperty(this.getCellElement$3(this._table.bodyElem, row, column), "align", align._textAlign._dart_web_toolkit_util$_value);
+      Q.Dom_setElementProperty(this.getCellElement$3(this._table.bodyElem, row, column), "align", align._textAlign._value);
     },
     getCellElement$3: function(table, row, col) {
       var t1 = J.getInterceptor(table);
@@ -15800,7 +15811,7 @@ var $$ = {};
     "^": "Object;"
   },
   Label: {
-    "^": "LabelBase;_editor,directionalTextHelper,_autoHorizontalAlignment,_horzAlign,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "LabelBase;_editor,directionalTextHelper,_autoHorizontalAlignment,_horzAlign,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     get$text: function(_) {
       return this.directionalTextHelper.getTextOrHtml$1(false);
     },
@@ -15823,25 +15834,25 @@ var $$ = {};
   LabelBase: {
     "^": "Widget;",
     set$wordWrap: function(_, wrap) {
-      var t1 = this._dart_web_toolkit_ui$_element.style;
-      J.set$whiteSpace$x(t1, wrap === true ? C.WhiteSpace_normal._dart_web_toolkit_util$_value : C.WhiteSpace_nowrap._dart_web_toolkit_util$_value);
+      var t1 = this._element.style;
+      J.set$whiteSpace$x(t1, wrap === true ? C.WhiteSpace_normal._value : C.WhiteSpace_nowrap._value);
     },
     updateHorizontalAlignment$0: function() {
       if (null != this._horzAlign) {
         this._horzAlign = null;
-        var t1 = this._dart_web_toolkit_ui$_element.style;
+        var t1 = this._element.style;
         J.set$textAlign$x(t1, "");
       }
     },
     LabelBase$_internal$2: function(element, isElementInline) {
-      this._dart_web_toolkit_ui$_element = element;
+      this._element = element;
       this.directionalTextHelper = A.DirectionalTextHelper$(element, isElementInline);
     }
   },
   ListBox: {
-    "^": "FocusWidget;eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "FocusWidget;eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     get$name: function(_) {
-      return H.interceptedTypeCast(this._dart_web_toolkit_ui$_element, "$isSelectElement").name;
+      return H.interceptedTypeCast(this._element, "$isSelectElement").name;
     },
     addItem$2: function(item, value) {
       this.insertItem$4(item, null, item, -1);
@@ -15851,7 +15862,7 @@ var $$ = {};
     },
     insertItem$4: function(item, dir, value, index) {
       var select, option, itemCount, t1, t2;
-      select = H.interceptedTypeCast(this._dart_web_toolkit_ui$_element, "$isSelectElement");
+      select = H.interceptedTypeCast(this._element, "$isSelectElement");
       option = W.OptionElement_OptionElement$_("", "", null, false);
       option.textContent = item;
       new W._ElementAttributeMap(option).remove$1(0, "bidiwrapped");
@@ -15889,11 +15900,11 @@ var $$ = {};
     _dart_web_toolkit_ui$_checkIndex$1: function(_, index) {
       if (typeof index !== "number")
         return index.$lt();
-      if (index < 0 || index >= J.get$options$x(H.interceptedTypeCast(this._dart_web_toolkit_ui$_element, "$isSelectElement"))._collection$_source.length)
+      if (index < 0 || index >= J.get$options$x(H.interceptedTypeCast(this._element, "$isSelectElement"))._collection$_source.length)
         throw H.wrapException(P.Exception_Exception("IndexOutOfBoundsException"));
     },
     ListBox$2: function(isMultipleSelect, element) {
-      H.interceptedTypeCast(this._dart_web_toolkit_ui$_element, "$isSelectElement").multiple = isMultipleSelect;
+      H.interceptedTypeCast(this._element, "$isSelectElement").multiple = isMultipleSelect;
     },
     static: {"^": "ListBox_INSERT_AT_END,ListBox_BIDI_ATTR_NAME"}
   },
@@ -15927,7 +15938,7 @@ var $$ = {};
         this._isAnimationEnabled = false;
         this.show$0(0);
       }
-      elem = this._dart_web_toolkit_ui$_element;
+      elem = this._element;
       J.set$left$x(elem.style, "0px");
       J.set$top$x(elem.style, "0px");
       t2 = window.innerWidth;
@@ -15950,7 +15961,7 @@ var $$ = {};
         this._isAnimationEnabled = initiallyAnimated;
         if (initiallyAnimated) {
           t1 = $.get$PopupPanel_impl();
-          t2 = this._dart_web_toolkit_ui$_element;
+          t2 = this._element;
           t1.toString;
           J.set$clip$x(t2.style, "rect(0px, 0px, 0px, 0px)");
           this.set$visible(true);
@@ -15979,14 +15990,14 @@ var $$ = {};
       t2 = document.body;
       t2.toString;
       t2 = P.Rectangle$(C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t2.offsetLeft)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t2.offsetTop)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t2.offsetWidth)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t2.offsetHeight)), null);
-      elem = this._dart_web_toolkit_ui$_element;
-      t3 = C.Unit_px._dart_web_toolkit_util$_value;
+      elem = this._element;
+      t3 = C.Unit_px._value;
       J.set$left$x(elem.style, C.JSString_methods.$add(C.JSNumber_methods.toString$0(left - t1.left), t3));
       J.set$top$x(elem.style, C.JSString_methods.$add(C.JSNumber_methods.toString$0($top - t2.top), t3));
     },
     set$visible: function(vis) {
       var t1, t2;
-      t1 = this._dart_web_toolkit_ui$_element;
+      t1 = this._element;
       t2 = vis ? "visible" : "hidden";
       J.setProperty$3$x(t1.style, "visibility", t2, "");
       $.get$PopupPanel_impl().toString;
@@ -16036,7 +16047,7 @@ var $$ = {};
       var target, t1;
       target = J.get$target$x($event);
       if (!!J.getInterceptor(target).$isElement) {
-        t1 = this._dart_web_toolkit_ui$_element;
+        t1 = this._element;
         $.get$Dom_impl().toString;
         return t1.contains(target);
       }
@@ -16190,18 +16201,18 @@ var $$ = {};
       if (animate)
         if (showing) {
           this.maybeShowGlass$0();
-          J.setProperty$3$x(this.curPanel._dart_web_toolkit_ui$_element.style, "position", "absolute", "");
+          J.setProperty$3$x(this.curPanel._element.style, "position", "absolute", "");
           t1 = this.curPanel;
           t2 = t1.topPosition;
           if (t2 !== -1)
             t1.setPopupPosition$2(t1.leftPosition, t2);
           t1 = $.get$PopupPanel_impl();
-          t2 = this.curPanel._dart_web_toolkit_ui$_element;
+          t2 = this.curPanel._element;
           t1.toString;
           J.set$clip$x(t2.style, "rect(0px, 0px, 0px, 0px)");
           J.add$1$ax(B.RootPanel_get(null), this.curPanel);
           t2 = $.get$PopupPanel_impl();
-          this.curPanel._dart_web_toolkit_ui$_element;
+          this.curPanel._element;
           t2.toString;
           t2 = K.Timer_Timer$get(new B.ResizeAnimation_setState_closure(this));
           this.showTimer = t2;
@@ -16211,7 +16222,7 @@ var $$ = {};
       else {
         this.maybeShowGlass$0();
         if (this.showing) {
-          J.setProperty$3$x(this.curPanel._dart_web_toolkit_ui$_element.style, "position", "absolute", "");
+          J.setProperty$3$x(this.curPanel._element.style, "position", "absolute", "");
           t1 = this.curPanel;
           t2 = t1.topPosition;
           if (t2 !== -1)
@@ -16219,7 +16230,7 @@ var $$ = {};
           J.add$1$ax(B.RootPanel_get(null), this.curPanel);
           t1 = $.get$PopupPanel_impl();
           t2 = this.curPanel;
-          t2._dart_web_toolkit_ui$_element;
+          t2._element;
           t1.toString;
           t1 = t2;
         } else {
@@ -16227,11 +16238,11 @@ var $$ = {};
             J.remove$1$ax(B.RootPanel_get(null), this.curPanel);
           t1 = $.get$PopupPanel_impl();
           t2 = this.curPanel;
-          t2._dart_web_toolkit_ui$_element;
+          t2._element;
           t1.toString;
           t1 = t2;
         }
-        J.setProperty$3$x(t1._dart_web_toolkit_ui$_element.style, "overflow", "visible", "");
+        J.setProperty$3$x(t1._element.style, "overflow", "visible", "");
       }
     },
     onComplete$0: function() {
@@ -16241,14 +16252,14 @@ var $$ = {};
         if (!this.isUnloading)
           J.remove$1$ax(B.RootPanel_get(null), this.curPanel);
         t1 = $.get$PopupPanel_impl();
-        this.curPanel._dart_web_toolkit_ui$_element;
+        this.curPanel._element;
         t1.toString;
       }
       t1 = $.get$PopupPanel_impl();
-      t2 = this.curPanel._dart_web_toolkit_ui$_element;
+      t2 = this.curPanel._element;
       t1.toString;
       J.set$clip$x(t2.style, "rect(auto, auto, auto, auto)");
-      J.setProperty$3$x(this.curPanel._dart_web_toolkit_ui$_element.style, "overflow", "visible", "");
+      J.setProperty$3$x(this.curPanel._element.style, "overflow", "visible", "");
     },
     onStart$0: function() {
       var t1 = this.curPanel;
@@ -16257,7 +16268,7 @@ var $$ = {};
       t1 = this.curPanel;
       t1.toString;
       this.offsetWidth = B.UiObject.prototype.getOffsetWidth$0.call(t1);
-      J.setProperty$3$x(this.curPanel._dart_web_toolkit_ui$_element.style, "overflow", "hidden", "");
+      J.setProperty$3$x(this.curPanel._element.style, "overflow", "hidden", "");
       E.Animation.prototype.onStart$0.call(this);
     },
     onUpdate$1: function(progress) {
@@ -16300,7 +16311,7 @@ var $$ = {};
           bottom = 0;
       }
       t2 = $.get$PopupPanel_impl();
-      t1 = t1._dart_web_toolkit_ui$_element;
+      t1 = t1._element;
       t3 = "rect(" + $top + "px, " + right + "px, " + bottom + "px, " + left + "px)";
       t2.toString;
       J.set$clip$x(t1.style, t3);
@@ -16320,8 +16331,8 @@ var $$ = {};
           winWidth = window.innerWidth;
           winHeight = window.innerHeight;
           t2 = t2._panel.glass;
-          C.JSNull_methods.get$style(t2).set$display(0, C.Display_none._dart_web_toolkit_util$_value);
-          t1 = C.Unit_px._dart_web_toolkit_util$_value;
+          C.JSNull_methods.get$style(t2).set$display(0, C.Display_none._value);
+          t1 = C.Unit_px._value;
           C.JSNull_methods.get$style(t2).set$width(0, C.JSString_methods.$add("0", t1));
           C.JSNull_methods.get$style(t2).set$height(0, C.JSString_methods.$add("0", t1));
           t3 = document.body;
@@ -16332,7 +16343,7 @@ var $$ = {};
           height = C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t3.scrollHeight));
           C.JSNull_methods.get$style(t2).set$width(0, C.JSString_methods.$add(C.JSInt_methods.toString$0(P.max(width, winWidth)), t1));
           C.JSNull_methods.get$style(t2).set$height(0, C.JSString_methods.$add(C.JSInt_methods.toString$0(P.max(height, winHeight)), t1));
-          C.JSNull_methods.get$style(t2).set$display(0, C.Display_block._dart_web_toolkit_util$_value);
+          C.JSNull_methods.get$style(t2).set$display(0, C.Display_block._value);
           this.glassShowing = true;
         }
       } else if (this.glassShowing) {
@@ -16357,7 +16368,7 @@ var $$ = {};
     "^": "Object;_panel"
   },
   RadioButton: {
-    "^": "CheckBox;_oldValue,directionalTextHelper,inputElem,labelElem,editor,_valueChangeHandlerInitialized,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "CheckBox;_oldValue,directionalTextHelper,inputElem,labelElem,editor,_valueChangeHandlerInitialized,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     onBrowserEvent$1: function($event) {
       var t1, target;
       t1 = J.getInterceptor$x($event);
@@ -16422,7 +16433,7 @@ var $$ = {};
         t2 = document.createElement("span", null);
         t3 = new B.RadioButton(null, null, null, null, null, false, 0, null, false, null, null, null);
         if (t2 != null)
-          t3._dart_web_toolkit_ui$_element = t2;
+          t3._element = t2;
         t3.CheckBox$fromElement$1(t1);
         t3.RadioButton$3($name, label, asHtml);
         return t3;
@@ -16439,7 +16450,7 @@ var $$ = {};
     $isFunction: true
   },
   DefaultRootPanel: {
-    "^": "RootPanel;_children,_orphanCommand,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element"
+    "^": "RootPanel;_children,_orphanCommand,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element"
   },
   MaybeDetachExceptionCommand: {
     "^": "Object;",
@@ -16449,9 +16460,9 @@ var $$ = {};
     }
   },
   SimplePanel: {
-    "^": "Panel;widget,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "Panel;widget,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     getContainerElement$0: function() {
-      return this._dart_web_toolkit_ui$_element;
+      return this._element;
     },
     add$1: function(_, w) {
       if (this.getWidget$0() != null)
@@ -16494,7 +16505,7 @@ var $$ = {};
       return this.widget;
     },
     SimplePanel$1: function(child) {
-      this._dart_web_toolkit_ui$_element = document.createElement("div", null);
+      this._element = document.createElement("div", null);
     }
   },
   SimplePanelIterator: {
@@ -16517,7 +16528,7 @@ var $$ = {};
     }
   },
   TabBar: {
-    "^": "Composite;panel,selectedTab,_widget,_renderable,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "Composite;panel,selectedTab,_widget,_renderable,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     insertTabText$3: function(text, beforeIndex, asHtml) {
       var item, delWidget, t1, t2, td, t3;
       this.checkInsertBeforeTabIndex$1(beforeIndex);
@@ -16534,7 +16545,7 @@ var $$ = {};
       t3 = t1._tableRow;
       $.get$Dom_impl().insertChild$3(t3, td, t2);
       t1.insert$4(0, delWidget, td, t2, false);
-      B.UiObject_manageElementStyleName(delWidget._dart_web_toolkit_ui$_element.parentElement, "dwt-TabBarItem-wrapper", true);
+      B.UiObject_manageElementStyleName(delWidget._element.parentElement, "dwt-TabBarItem-wrapper", true);
     },
     selectTab$2: function(index, fireEvents) {
       var $event, t1, t2;
@@ -16626,13 +16637,13 @@ var $$ = {};
       td = t1.getWidgetTd$1(rest);
       if (td != null)
         J.set$width$x(td.style, "100%");
-      first._dart_web_toolkit_ui$_element.parentElement.className = "dwt-TabBarFirst-wrapper";
-      rest._dart_web_toolkit_ui$_element.parentElement.className = "dwt-TabBarRest-wrapper";
+      first._element.parentElement.className = "dwt-TabBarFirst-wrapper";
+      rest._element.parentElement.className = "dwt-TabBarRest-wrapper";
     },
     static: {"^": "TabBar_STYLENAME_DEFAULT"}
   },
   _ClickDelegatePanel: {
-    "^": "Composite;focusablePanel,enabled,_tabBar,_widget,_renderable,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "Composite;focusablePanel,enabled,_tabBar,_widget,_renderable,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     onBrowserEvent$1: function($event) {
       var t1;
       if (!this.enabled)
@@ -16656,7 +16667,7 @@ var $$ = {};
       div = document.createElement("div", null);
       div.setAttribute("tabIndex", "0");
       t1 = new B.SimplePanel(null, 0, null, false, null, null, null);
-      t1._dart_web_toolkit_ui$_element = div;
+      t1._element = div;
       this.focusablePanel = t1;
       t1.setWidget$1(child);
       this.initWidget$1(this.focusablePanel);
@@ -16664,7 +16675,7 @@ var $$ = {};
     }
   },
   TextBox: {
-    "^": "TextBoxBase;_autoDirHandler,_parser,_renderer,_editor,_currentEvent,_valueChangeHandlerInitialized,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element"
+    "^": "TextBoxBase;_autoDirHandler,_parser,_renderer,_editor,_currentEvent,_valueChangeHandlerInitialized,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element"
   },
   TextBoxBase: {
     "^": "ValueBoxBase;"
@@ -16672,10 +16683,10 @@ var $$ = {};
   UiObject: {
     "^": "Object;",
     getElement$0: function() {
-      return this._dart_web_toolkit_ui$_element;
+      return this._element;
     },
     setHeight$1: function(height) {
-      J.setProperty$3$x(this._dart_web_toolkit_ui$_element.style, "height", height, "");
+      J.setProperty$3$x(this._element.style, "height", height, "");
     },
     addStyleName$1: function(style) {
       B.UiObject_manageElementStyleName(this.getStyleElement$0(), style, true);
@@ -16684,27 +16695,27 @@ var $$ = {};
       B.UiObject_manageElementStyleName(this.getStyleElement$0(), style, false);
     },
     getStyleElement$0: function() {
-      return this._dart_web_toolkit_ui$_element;
+      return this._element;
     },
     getOffsetHeight$0: function() {
-      var t1 = this._dart_web_toolkit_ui$_element;
+      var t1 = this._element;
       t1.toString;
       return P.Rectangle$(C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetLeft)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetTop)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetWidth)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetHeight)), null).height;
     },
     getOffsetWidth$0: function() {
-      var t1 = this._dart_web_toolkit_ui$_element;
+      var t1 = this._element;
       t1.toString;
       return P.Rectangle$(C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetLeft)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetTop)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetWidth)), C.JSNumber_methods.toInt$0(C.JSNumber_methods.roundToDouble$0(t1.offsetHeight)), null).width;
     },
     toString$0: function(_) {
-      var t1 = this._dart_web_toolkit_ui$_element;
+      var t1 = this._element;
       if (t1 == null)
         return "(null handle)";
       return J.toString$0(t1);
     },
     sinkEvents$1: function(eventBitsToAdd) {
       var t1, t2, t3;
-      t1 = this._dart_web_toolkit_ui$_element;
+      t1 = this._element;
       t2 = $.get$Dom_impl()._getEventBits$1(t1);
       if (typeof t2 !== "number")
         return H.iae(t2);
@@ -16716,11 +16727,11 @@ var $$ = {};
   ValueBoxBase: {
     "^": "FocusWidget;",
     get$name: function(_) {
-      return Q.Dom_getElementProperty(this._dart_web_toolkit_ui$_element, "name");
+      return Q.Dom_getElementProperty(this._element, "name");
     },
     get$text: function(_) {
       var t1, t2;
-      t1 = this._dart_web_toolkit_ui$_element;
+      t1 = this._element;
       t2 = J.getInterceptor(t1);
       if (!!t2.$isInputElement)
         return H.interceptedTypeCast(t1, "$isInputElement").value;
@@ -16757,7 +16768,7 @@ var $$ = {};
     }
   },
   VerticalPanel: {
-    "^": "CellPanel;_horzAlign,_vertAlign,_spacing,_table,_body,_children,_orphanCommand,eventsToSink,_eventBus,_attached,_widget_layoutData,_dart_web_toolkit_ui$_parent,_dart_web_toolkit_ui$_element",
+    "^": "CellPanel;_horzAlign,_vertAlign,_spacing,_table,_body,_children,_orphanCommand,eventsToSink,_eventBus,_attached,_widget_layoutData,_parent,_element",
     add$1: function(_, w) {
       var tr, td;
       tr = document.createElement("tr", null);
@@ -16778,7 +16789,7 @@ var $$ = {};
       var td, t1;
       td = document.createElement("td", null);
       t1 = this._horzAlign;
-      J.set$textAlign$x(td.style, t1._textAlign._dart_web_toolkit_util$_value);
+      J.set$textAlign$x(td.style, t1._textAlign._value);
       t1 = this._vertAlign;
       J.set$verticalAlign$x(td.style, t1._verticalAlignString);
       return td;
@@ -16807,7 +16818,7 @@ var $$ = {};
         case 32:
           related = H.interceptedTypeCast(W._convertNativeToDart_EventTarget(H.interceptedTypeCast($event, "$isMouseEvent").relatedTarget), "$isElement");
           if (related != null) {
-            t1 = this._dart_web_toolkit_ui$_element;
+            t1 = this._element;
             $.get$Dom_impl().toString;
             t1 = t1.contains(related) === true;
           } else
@@ -16816,7 +16827,7 @@ var $$ = {};
             return;
           break;
       }
-      t1 = this._dart_web_toolkit_ui$_element;
+      t1 = this._element;
       t3 = $.DomEvent__registered;
       if (t3 != null) {
         typeKey = t3.$index(0, t2.get$type($event));
@@ -16837,9 +16848,9 @@ var $$ = {};
         if ($event.get$_dead())
           $event.revive$0();
         oldSource = Q.IEvent.prototype.getSource$0.call($event);
-        Q.IEvent.prototype.setSource$1.call($event, this._dart_web_toolkit_ui$_element);
+        Q.IEvent.prototype.setSource$1.call($event, this._element);
         try {
-          this._eventBus._doFire$2($event, this._dart_web_toolkit_ui$_element);
+          this._eventBus._doFire$2($event, this._element);
         } catch (exception) {
           t1 = H.unwrapException(exception);
           if (!!J.getInterceptor(t1).$isUmbrellaException) {
@@ -16864,7 +16875,7 @@ var $$ = {};
       t1 = type.eventName;
       typeInt = $.get$Dom_impl().eventGetTypeInt$1(t1);
       if (typeInt === -1) {
-        t2 = this._dart_web_toolkit_ui$_element;
+        t2 = this._element;
         $.get$Dom_impl().maybeInitializeEventSystem$0();
         switch (t1) {
           case "drag":
@@ -16931,28 +16942,28 @@ var $$ = {};
       return this._attached;
     },
     getParent$0: function() {
-      return this._dart_web_toolkit_ui$_parent;
+      return this._parent;
     },
     setParent$1: function($parent) {
-      var oldParent = this._dart_web_toolkit_ui$_parent;
+      var oldParent = this._parent;
       if ($parent == null)
         try {
           if (oldParent != null && oldParent.isAttached$0())
             this.onDetach$0();
         } finally {
-          this._dart_web_toolkit_ui$_parent = null;
+          this._parent = null;
         }
       else {
         if (oldParent != null)
           throw H.wrapException(P.Exception_Exception("Cannot set a new parent without first clearing the old parent"));
-        this._dart_web_toolkit_ui$_parent = $parent;
+        this._parent = $parent;
         if ($parent.isAttached$0())
           this.onAttach$0();
       }
     },
     removeFromParent$0: function() {
       var t1, t2;
-      t1 = this._dart_web_toolkit_ui$_parent;
+      t1 = this._parent;
       if (t1 == null) {
         if ($.get$RootPanel__widgetsToDetach().contains$1(0, this))
           B.RootPanel_detachNow(this);
@@ -16973,7 +16984,7 @@ var $$ = {};
       if (this.isAttached$0())
         throw H.wrapException(P.Exception_Exception("Should only call onAttach when the widget is detached from the browser's document"));
       this._attached = true;
-      t1 = this._dart_web_toolkit_ui$_element;
+      t1 = this._element;
       $.get$Dom_impl()._dart_web_toolkit_event$_listener.$indexSet(0, t1, this);
       bitsToAdd = this.eventsToSink;
       this.eventsToSink = -1;
@@ -16995,7 +17006,7 @@ var $$ = {};
         try {
           this.doDetachChildren$0();
         } finally {
-          var t1 = this._dart_web_toolkit_ui$_element;
+          var t1 = this._element;
           $.get$Dom_impl()._dart_web_toolkit_event$_listener.$indexSet(0, t1, null);
           this._attached = false;
         }
@@ -17005,7 +17016,7 @@ var $$ = {};
     }
   },
   WidgetCollection: {
-    "^": "Iterable;_dart_web_toolkit_ui$_array,_dart_web_toolkit_ui$_parent,_size",
+    "^": "Iterable;_dart_web_toolkit_ui$_array,_parent,_size",
     add$1: function(_, w) {
       this.insert$2(0, w, this._size);
     },
@@ -17121,7 +17132,7 @@ var $$ = {};
     },
     WidgetCollection$1: function(_parent) {
       var t1;
-      this._dart_web_toolkit_ui$_parent = this._dart_web_toolkit_ui$_parent;
+      this._parent = this._parent;
       t1 = Array($.WidgetCollection__INITIAL_SIZE);
       t1.fixed$length = init;
       this._dart_web_toolkit_ui$_array = H.setRuntimeTypeInfo(t1, [B.Widget]);
@@ -17159,7 +17170,7 @@ var $$ = {};
       if (t1 < 0 || t1 >= this._widgetCollection._size)
         throw H.wrapException(P.Exception_Exception("IllegalState"));
       t2 = this._widgetCollection;
-      t3 = t2._dart_web_toolkit_ui$_parent;
+      t3 = t2._parent;
       t2 = t2._dart_web_toolkit_ui$_array;
       this.index = t1 - 1;
       if (t1 < 0 || t1 >= t2.length)
@@ -17171,29 +17182,29 @@ var $$ = {};
 ["dart_web_toolkit_util", "package:dart_web_toolkit/util.dart", , K, {
   "^": "",
   AnimationType: {
-    "^": "Enum;_dart_web_toolkit_util$_value",
+    "^": "Enum;_value",
     static: {"^": "AnimationType_CENTER,AnimationType_ONE_WAY_CORNER,AnimationType_ROLL_DOWN"}
   },
   Enum: {
     "^": "Object;",
     get$value: function(_) {
-      return this._dart_web_toolkit_util$_value;
+      return this._value;
     }
   },
   Display: {
-    "^": "Enum;_dart_web_toolkit_util$_value",
+    "^": "Enum;_value",
     static: {"^": "Display_NONE,Display_BLOCK,Display_INLINE,Display_INLINE_BLOCK"}
   },
   Unit: {
-    "^": "Enum;_dart_web_toolkit_util$_value",
+    "^": "Enum;_value",
     static: {"^": "Unit_PX,Unit_PCT,Unit_EM,Unit_EX,Unit_PT,Unit_PC,Unit_IN,Unit_CM,Unit_MM"}
   },
   WhiteSpace: {
-    "^": "Enum;_dart_web_toolkit_util$_value",
+    "^": "Enum;_value",
     static: {"^": "WhiteSpace_NORMAL,WhiteSpace_NOWRAP,WhiteSpace_PRE,WhiteSpace_PRE_LINE,WhiteSpace_PRE_WRAP"}
   },
   TextAlign: {
-    "^": "Enum;_dart_web_toolkit_util$_value",
+    "^": "Enum;_value",
     static: {"^": "TextAlign_CENTER,TextAlign_JUSTIFY,TextAlign_LEFT,TextAlign_RIGHT"}
   },
   Timer: {
@@ -19561,20 +19572,20 @@ var $$ = {};
       t1 = {};
       t2 = $.get$sockets();
       t3 = t2.tcpServer;
-      t4 = t3._onAccept._common$_controller;
+      t4 = t3._onAccept._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t4), [H.getTypeArgumentByIndex(t4, 0)]).listen$1(new N.HetiChromeSocketManager_manageServerSocket_closure(this));
-      t3 = t3._onAcceptError._common$_controller;
+      t3 = t3._onAcceptError._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t3), [H.getTypeArgumentByIndex(t3, 0)]).listen$1(new N.HetiChromeSocketManager_manageServerSocket_closure0());
       t1.closeChecking_0 = false;
       t3 = t2.tcp;
-      t4 = t3._onReceive._common$_controller;
+      t4 = t3._onReceive._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t4), [H.getTypeArgumentByIndex(t4, 0)]).listen$1(new N.HetiChromeSocketManager_manageServerSocket_closure1(this));
-      t3 = t3._onReceiveError._common$_controller;
+      t3 = t3._onReceiveError._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t3), [H.getTypeArgumentByIndex(t3, 0)]).listen$1(new N.HetiChromeSocketManager_manageServerSocket_closure2(t1, this));
       t2 = t2.udp;
-      t1 = t2._onReceive._common$_controller;
+      t1 = t2._onReceive._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t1), [H.getTypeArgumentByIndex(t1, 0)]).listen$1(new N.HetiChromeSocketManager_manageServerSocket_closure3(this));
-      t2 = t2._onReceiveError._common$_controller;
+      t2 = t2._onReceiveError._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t2), [H.getTypeArgumentByIndex(t2, 0)]).listen$1(new N.HetiChromeSocketManager_manageServerSocket_closure4());
     },
     static: {"^": "HetiChromeSocketManager__instance"}
@@ -19640,7 +19651,7 @@ var $$ = {};
     bind$2: function(address, port) {
       var t1, t2, completer, completer0;
       t1 = $.get$sockets().udp;
-      t2 = t1._onReceive._common$_controller;
+      t2 = t1._onReceive._controller;
       H.setRuntimeTypeInfo(new P._BroadcastStream(t2), [H.getTypeArgumentByIndex(t2, 0)]).listen$1(this.get$onReceiveInternal());
       completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
       t2 = $.get$chrome();
@@ -20014,79 +20025,14 @@ var $$ = {};
   },
   MainView: {
     "^": "Object;_foundRouter,_mainPanel,_subPanel,_mainForSubPanel,_otherForSubPanel,_infoForSubPanel,_controllerSearchButton,_controllerTab,_controllerSelectRouter,_controllerAddPortMapButton,_controllerDelPortMapButton,_globalIpBox,portMapList,networkInterfaceList",
-    updateInfoPanel$0: function() {
-      var t1, layout, cellFormatter, t2, grid, index, i, t3, t4, l0, t5, l1;
-      t1 = this._infoForSubPanel;
-      t1.clear$0(0);
-      layout = B.FlexTable$();
-      Q.Dom_setElementPropertyInt(layout.tableElem, "cellSpacing", 6);
-      cellFormatter = H.interceptedTypeCast(layout.cellFormatter, "$isFlexCellFormatter");
-      layout.setHtml$3(0, 0, "Information");
-      cellFormatter._table.prepareCell$2(0, 0);
-      Q.Dom_setElementPropertyInt(cellFormatter.getCellElement$3(cellFormatter._table.bodyElem, 0, 0), "colSpan", 2);
-      cellFormatter.setHorizontalAlignment$3(0, 0, C.HorizontalAlignmentConstant_TextAlign_center);
-      layout.setHtml$3(1, 0, "Global IP:");
-      t2 = this._globalIpBox;
-      B.UiObject_manageElementStyleName(t2.getStyleElement$0(), "hetima-grid", true);
-      layout.setWidget$3(2, 1, t2);
-      layout.setHtml$3(3, 0, "Local IP:");
-      grid = B.Grid$(1 + this.portMapList.length, 5);
-      B.UiObject_manageElementStyleName(grid.getStyleElement$0(), "cw-FlexTable", true);
-      grid.setWidget$3(0, 0, B.Html$("IP", null));
-      grid.setWidget$3(0, 1, B.Html$("Length", null));
-      for (t2 = this.networkInterfaceList, t2 = new H.ListIterator(t2, t2.length, 0, null), index = 0; t2.moveNext$0();) {
-        i = t2._current;
-        t3 = H.S(i.get$ip());
-        t4 = document.createElement("div", null);
-        l0 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l0._dart_web_toolkit_ui$_element = t4;
-        t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
-        t5.element = t4;
-        t5.isElementInline = false;
-        t5.isSpanWrapped = false;
-        t4 = A.BidiUtils_getDirectionOnElement(t4);
-        t5.initialElementDir = t4;
-        t5.textDir = t4;
-        t5.isDirectionExplicitlySet = true;
-        l0.directionalTextHelper = t5;
-        l0.getStyleElement$0().className = "dwt-Label";
-        l0.getStyleElement$0().className = "dwt-HTML";
-        l0.directionalTextHelper.setTextOrHtml$2(t3, true);
-        l0.updateHorizontalAlignment$0();
-        B.UiObject_manageElementStyleName(l0.getStyleElement$0(), "hetima-grid", true);
-        t3 = H.S(J.get$length$asx(i));
-        t4 = document.createElement("div", null);
-        l1 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l1._dart_web_toolkit_ui$_element = t4;
-        t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
-        t5.element = t4;
-        t5.isElementInline = false;
-        t5.isSpanWrapped = false;
-        t4 = A.BidiUtils_getDirectionOnElement(t4);
-        t5.initialElementDir = t4;
-        t5.textDir = t4;
-        t5.isDirectionExplicitlySet = true;
-        l1.directionalTextHelper = t5;
-        l1.getStyleElement$0().className = "dwt-Label";
-        l1.getStyleElement$0().className = "dwt-HTML";
-        l1.directionalTextHelper.setTextOrHtml$2(t3, true);
-        l1.updateHorizontalAlignment$0();
-        B.UiObject_manageElementStyleName(l1.getStyleElement$0(), "hetima-grid", true);
-        ++index;
-        grid.setWidget$3(index, 0, l0);
-        grid.setWidget$3(index, 1, l1);
-      }
-      layout.setWidget$3(4, 1, grid);
-      t1.add$1(0, layout);
-    },
     currentSelectRouter$0: function() {
       var t1, t2;
       t1 = this._foundRouter;
-      t2 = H.interceptedTypeCast(t1._dart_web_toolkit_ui$_element, "$isSelectElement").selectedIndex;
+      t2 = H.interceptedTypeCast(t1._element, "$isSelectElement").selectedIndex;
       if (t2 === -1)
         return "";
       t1._dart_web_toolkit_ui$_checkIndex$1(0, t2);
-      t1 = J.get$options$x(H.interceptedTypeCast(t1._dart_web_toolkit_ui$_element, "$isSelectElement"))._collection$_source;
+      t1 = J.get$options$x(H.interceptedTypeCast(t1._element, "$isSelectElement"))._collection$_source;
       if (t2 >>> 0 !== t2 || t2 >= t1.length)
         return H.ioore(t1, t2);
       return J.get$value$x(t1[t2]);
@@ -20130,7 +20076,7 @@ var $$ = {};
       t3 = O.PassthroughParser_PassthroughParser$instance();
       localPortBox = new B.TextBox(null, null, null, null, null, false, 0, null, false, null, null, null);
       if (t1 != null)
-        localPortBox._dart_web_toolkit_ui$_element = t1;
+        localPortBox._element = t1;
       localPortBox.ValueBoxBase$3(t1, t2, t3);
       localPortBox.getStyleElement$0().className = "dwt-TextBox";
       t1 = W.InputElement_InputElement(null);
@@ -20138,7 +20084,7 @@ var $$ = {};
       t3 = O.PassthroughParser_PassthroughParser$instance();
       localAddressBox = new B.TextBox(null, null, null, null, null, false, 0, null, false, null, null, null);
       if (t1 != null)
-        localAddressBox._dart_web_toolkit_ui$_element = t1;
+        localAddressBox._element = t1;
       localAddressBox.ValueBoxBase$3(t1, t2, t3);
       localAddressBox.getStyleElement$0().className = "dwt-TextBox";
       t1 = W.InputElement_InputElement(null);
@@ -20146,7 +20092,7 @@ var $$ = {};
       t3 = O.PassthroughParser_PassthroughParser$instance();
       publicPortBox = new B.TextBox(null, null, null, null, null, false, 0, null, false, null, null, null);
       if (t1 != null)
-        publicPortBox._dart_web_toolkit_ui$_element = t1;
+        publicPortBox._element = t1;
       publicPortBox.ValueBoxBase$3(t1, t2, t3);
       publicPortBox.getStyleElement$0().className = "dwt-TextBox";
       t1 = W.InputElement_InputElement(null);
@@ -20154,7 +20100,7 @@ var $$ = {};
       t3 = O.PassthroughParser_PassthroughParser$instance();
       descriptionBox = new B.TextBox(null, null, null, null, null, false, 0, null, false, null, null, null);
       if (t1 != null)
-        descriptionBox._dart_web_toolkit_ui$_element = t1;
+        descriptionBox._element = t1;
       descriptionBox.ValueBoxBase$3(t1, t2, t3);
       descriptionBox.getStyleElement$0().className = "dwt-TextBox";
       radioTCP = B.RadioButton$("protocol", "TCP", false);
@@ -20221,7 +20167,7 @@ var $$ = {};
         t3 = H.S(i.get$description());
         t4 = document.createElement("div", null);
         l0 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l0._dart_web_toolkit_ui$_element = t4;
+        l0._element = t4;
         t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
         t5.element = t4;
         t5.isElementInline = false;
@@ -20238,7 +20184,7 @@ var $$ = {};
         t3 = H.S(J.get$protocol$x(i));
         t4 = document.createElement("div", null);
         l1 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l1._dart_web_toolkit_ui$_element = t4;
+        l1._element = t4;
         t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
         t5.element = t4;
         t5.isElementInline = false;
@@ -20255,7 +20201,7 @@ var $$ = {};
         t3 = H.S(i.get$publicPort());
         t4 = document.createElement("div", null);
         l2 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l2._dart_web_toolkit_ui$_element = t4;
+        l2._element = t4;
         t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
         t5.element = t4;
         t5.isElementInline = false;
@@ -20272,7 +20218,7 @@ var $$ = {};
         t3 = H.S(i.get$localIp());
         t4 = document.createElement("div", null);
         l3 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l3._dart_web_toolkit_ui$_element = t4;
+        l3._element = t4;
         t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
         t5.element = t4;
         t5.isElementInline = false;
@@ -20289,7 +20235,7 @@ var $$ = {};
         t3 = H.S(i.get$localPort());
         t4 = document.createElement("div", null);
         l4 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l4._dart_web_toolkit_ui$_element = t4;
+        l4._element = t4;
         t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
         t5.element = t4;
         t5.isElementInline = false;
@@ -20311,9 +20257,9 @@ var $$ = {};
         t3 = document.createElement("button", null);
         b = new B.Button(0, null, false, null, null, null);
         if (t3 != null)
-          b._dart_web_toolkit_ui$_element = t3;
+          b._element = t3;
         b.getStyleElement$0().className = "dwt-Button";
-        J.set$innerHtml$x(b._dart_web_toolkit_ui$_element, "x");
+        J.set$innerHtml$x(b._element, "x");
         b.addDomHandler$2(new Q.ClickHandlerAdapter(new Z.MainView_updateRouterList_closure(this, i)), $.get$ClickEvent_TYPE());
         grid.setWidget$3(row, 5, l0);
         grid.setWidget$3(row, 0, b);
@@ -20325,6 +20271,72 @@ var $$ = {};
       }
       t1.add$1(0, grid);
     },
+    updateInfoPanel$0: function() {
+      var t1, layout, cellFormatter, t2, grid, index, i, t3, t4, l0, t5, l1;
+      t1 = this._infoForSubPanel;
+      t1.clear$0(0);
+      layout = B.FlexTable$();
+      Q.Dom_setElementPropertyInt(layout.tableElem, "cellSpacing", 6);
+      cellFormatter = H.interceptedTypeCast(layout.cellFormatter, "$isFlexCellFormatter");
+      layout.setHtml$3(0, 0, "Information");
+      cellFormatter._table.prepareCell$2(0, 0);
+      Q.Dom_setElementPropertyInt(cellFormatter.getCellElement$3(cellFormatter._table.bodyElem, 0, 0), "colSpan", 2);
+      cellFormatter.setHorizontalAlignment$3(0, 0, C.HorizontalAlignmentConstant_TextAlign_center);
+      layout.setHtml$3(1, 0, "Global IP:");
+      t2 = this._globalIpBox;
+      B.UiObject_manageElementStyleName(t2.getStyleElement$0(), "hetima-grid", true);
+      layout.setWidget$3(2, 1, t2);
+      layout.setHtml$3(3, 0, "Local IP:");
+      t2 = this.networkInterfaceList;
+      grid = B.Grid$(1 + t2.length, 5);
+      B.UiObject_manageElementStyleName(grid.getStyleElement$0(), "cw-FlexTable", true);
+      grid.setWidget$3(0, 0, B.Html$("IP", null));
+      grid.setWidget$3(0, 1, B.Html$("Length", null));
+      for (t2 = new H.ListIterator(t2, t2.length, 0, null), index = 0; t2.moveNext$0();) {
+        i = t2._current;
+        t3 = H.S(i.get$ip());
+        t4 = document.createElement("div", null);
+        l0 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
+        l0._element = t4;
+        t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
+        t5.element = t4;
+        t5.isElementInline = false;
+        t5.isSpanWrapped = false;
+        t4 = A.BidiUtils_getDirectionOnElement(t4);
+        t5.initialElementDir = t4;
+        t5.textDir = t4;
+        t5.isDirectionExplicitlySet = true;
+        l0.directionalTextHelper = t5;
+        l0.getStyleElement$0().className = "dwt-Label";
+        l0.getStyleElement$0().className = "dwt-HTML";
+        l0.directionalTextHelper.setTextOrHtml$2(t3, true);
+        l0.updateHorizontalAlignment$0();
+        B.UiObject_manageElementStyleName(l0.getStyleElement$0(), "hetima-grid", true);
+        t3 = H.S(J.get$length$asx(i));
+        t4 = document.createElement("div", null);
+        l1 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
+        l1._element = t4;
+        t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
+        t5.element = t4;
+        t5.isElementInline = false;
+        t5.isSpanWrapped = false;
+        t4 = A.BidiUtils_getDirectionOnElement(t4);
+        t5.initialElementDir = t4;
+        t5.textDir = t4;
+        t5.isDirectionExplicitlySet = true;
+        l1.directionalTextHelper = t5;
+        l1.getStyleElement$0().className = "dwt-Label";
+        l1.getStyleElement$0().className = "dwt-HTML";
+        l1.directionalTextHelper.setTextOrHtml$2(t3, true);
+        l1.updateHorizontalAlignment$0();
+        B.UiObject_manageElementStyleName(l1.getStyleElement$0(), "hetima-grid", true);
+        ++index;
+        grid.setWidget$3(index, 0, l0);
+        grid.setWidget$3(index, 1, l1);
+      }
+      layout.setWidget$3(4, 1, grid);
+      t1.add$1(0, layout);
+    },
     static: {"^": "MainView_MAIN,MainView_LIST,MainView_INFO"}
   },
   MainView_intialize_closure: {
@@ -20334,9 +20346,9 @@ var $$ = {};
       t1 = this.this_0;
       t2 = t1._controllerSelectRouter;
       t1 = t1._foundRouter;
-      t3 = H.interceptedTypeCast(t1._dart_web_toolkit_ui$_element, "$isSelectElement").selectedIndex;
+      t3 = H.interceptedTypeCast(t1._element, "$isSelectElement").selectedIndex;
       t1._dart_web_toolkit_ui$_checkIndex$1(0, t3);
-      t1 = J.get$options$x(H.interceptedTypeCast(t1._dart_web_toolkit_ui$_element, "$isSelectElement"))._collection$_source;
+      t1 = J.get$options$x(H.interceptedTypeCast(t1._element, "$isSelectElement"))._collection$_source;
       if (t3 >>> 0 !== t3 || t3 >= t1.length)
         return H.ioore(t1, t3);
       t3 = J.get$value$x(t1[t3]);
@@ -21408,7 +21420,7 @@ var $$ = {};
     }
   },
   XmlAttribute: {
-    "^": "XmlNode;name>,value>,xml$XmlParent$_parent",
+    "^": "XmlNode;name>,value>,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_ATTRIBUTE;
     },
@@ -21439,7 +21451,7 @@ var $$ = {};
     XmlBranch$1: function(children) {
       var t1;
       for (t1 = J.get$iterator$ax(children); t1.moveNext$0();)
-        t1.get$current().set$_parent(this);
+        t1.get$current().set$_xml$_parent(this);
     }
   },
   XmlBranch__filterElements_closure: {
@@ -21457,7 +21469,7 @@ var $$ = {};
     $isFunction: true
   },
   XmlCDATA: {
-    "^": "XmlData;text,xml$XmlParent$_parent",
+    "^": "XmlData;text,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_CDATA;
     },
@@ -21468,7 +21480,7 @@ var $$ = {};
     }
   },
   XmlComment: {
-    "^": "XmlData;text,xml$XmlParent$_parent",
+    "^": "XmlData;text,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_COMMENT;
     },
@@ -21482,7 +21494,7 @@ var $$ = {};
     "^": "XmlNode;text>"
   },
   XmlDoctype: {
-    "^": "XmlData;text,xml$XmlParent$_parent",
+    "^": "XmlData;text,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_DOCUMENT_TYPE;
     },
@@ -21493,7 +21505,7 @@ var $$ = {};
     }
   },
   XmlDocument: {
-    "^": "XmlBranch;children,xml$XmlParent$_parent",
+    "^": "XmlBranch;children,xml$XmlParent$_xml$_parent",
     get$text: function(_) {
       return;
     },
@@ -21502,7 +21514,7 @@ var $$ = {};
     }
   },
   XmlElement: {
-    "^": "XmlBranch;name>,attributes>,children,xml$XmlParent$_parent",
+    "^": "XmlBranch;name>,attributes>,children,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_ELEMENT;
     },
@@ -21528,9 +21540,9 @@ var $$ = {};
     },
     XmlElement$3: function($name, attributes, children) {
       var t1;
-      $name.set$_parent(this);
+      $name.set$_xml$_parent(this);
       for (t1 = J.get$iterator$ax(attributes); t1.moveNext$0();)
-        t1.get$current().set$_parent(this);
+        t1.get$current().set$_xml$_parent(this);
     },
     $isXmlElement: true,
     static: {XmlElement$: function($name, attributes, children) {
@@ -21565,7 +21577,7 @@ var $$ = {};
     "^": "Object+XmlWritable;"
   },
   Object_XmlWritable_XmlParent: {
-    "^": "Object_XmlWritable+XmlParent;_parent:xml$XmlParent$_parent?"
+    "^": "Object_XmlWritable+XmlParent;_xml$_parent:xml$XmlParent$_xml$_parent?"
   },
   XmlNode_text_closure: {
     "^": "Closure:20;",
@@ -21582,7 +21594,7 @@ var $$ = {};
     $isFunction: true
   },
   XmlProcessing: {
-    "^": "XmlData;target>,text,xml$XmlParent$_parent",
+    "^": "XmlData;target>,text,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_PROCESSING;
     },
@@ -21599,7 +21611,7 @@ var $$ = {};
     }
   },
   XmlText: {
-    "^": "XmlData;text,xml$XmlParent$_parent",
+    "^": "XmlData;text,xml$XmlParent$_xml$_parent",
     get$nodeType: function(_) {
       return C.XmlNodeType_TEXT;
     },
@@ -21630,7 +21642,7 @@ var $$ = {};
       t1 = J.getInterceptor$asx(each);
       t2 = t1.$index(each, 0);
       t1 = new L.XmlAttribute(t2, t1.$index(each, 1), null);
-      t2.set$_parent(t1);
+      t2.set$_xml$_parent(t1);
       return t1;
     }, "call$1", null, 2, 0, null, 82, "call"],
     $isFunction: true
@@ -21737,10 +21749,10 @@ var $$ = {};
     "^": "Object+XmlWritable;"
   },
   Object_XmlWritable_XmlParent0: {
-    "^": "Object_XmlWritable0+XmlParent;_parent:xml$XmlParent$_parent?"
+    "^": "Object_XmlWritable0+XmlParent;_xml$_parent:xml$XmlParent$_xml$_parent?"
   },
   _XmlSimpleName: {
-    "^": "XmlName;local<,xml$XmlParent$_parent",
+    "^": "XmlName;local<,xml$XmlParent$_xml$_parent",
     get$prefix: function() {
       return;
     },
@@ -21760,7 +21772,7 @@ var $$ = {};
     }
   },
   _XmlPrefixName: {
-    "^": "XmlName;prefix<,local<,qualified<,xml$XmlParent$_parent",
+    "^": "XmlName;prefix<,local<,qualified<,xml$XmlParent$_xml$_parent",
     get$namespaceUri: function(_) {
       var node, t1, t2, attribute, t3;
       for (node = this.get$parent(this), t1 = this.prefix; node != null; node = node.get$parent(node))
@@ -21813,12 +21825,12 @@ var $$ = {};
     $isFunction: true
   },
   XmlParent: {
-    "^": "Object;_parent:xml$XmlParent$_parent?",
+    "^": "Object;_xml$_parent:xml$XmlParent$_xml$_parent?",
     get$parent: function(_) {
-      return this.xml$XmlParent$_parent;
+      return this.xml$XmlParent$_xml$_parent;
     },
     get$root: function() {
-      var t1 = this.xml$XmlParent$_parent;
+      var t1 = this.xml$XmlParent$_xml$_parent;
       return t1 == null ? this : t1.get$root();
     }
   },
@@ -21845,35 +21857,46 @@ $$ = null;
 // Runtime type support
 ;(function() {
   var TRUE = !0, _;
+  _ = W.Node;
+  _.$isNode = TRUE;
+  _.$isEventTarget = TRUE;
+  _.$isObject = TRUE;
   _ = P.$int;
   _.$is$int = TRUE;
   _.$isnum = TRUE;
   _.$isComparable = TRUE;
   _.$asComparable = [P.num];
   _.$isObject = TRUE;
-  _ = W.Node;
-  _.$isNode = TRUE;
-  _.$isEventTarget = TRUE;
-  _.$isObject = TRUE;
   _ = P.$double;
   _.$isnum = TRUE;
   _.$isComparable = TRUE;
   _.$asComparable = [P.num];
+  _.$isObject = TRUE;
+  _ = P.String;
+  _.$isString = TRUE;
+  _.$isComparable = TRUE;
+  _.$asComparable = [P.String];
   _.$isObject = TRUE;
   _ = P.num;
   _.$isnum = TRUE;
   _.$isComparable = TRUE;
   _.$asComparable = [P.num];
   _.$isObject = TRUE;
+  A.LeafValueEditor.$isObject = TRUE;
+  _ = B.Widget;
+  _.$isWidget = TRUE;
+  _.$isUiObject = TRUE;
+  _.$isObject = TRUE;
+  _ = W.Element;
+  _.$isElement = TRUE;
+  _.$isNode = TRUE;
+  _.$isEventTarget = TRUE;
+  _.$isEventTarget = TRUE;
+  _.$isObject = TRUE;
   _ = P.Duration;
   _.$isDuration = TRUE;
   _.$isComparable = TRUE;
   _.$asComparable = [P.Duration];
-  _.$isObject = TRUE;
-  _ = P.String;
-  _.$isString = TRUE;
-  _.$isComparable = TRUE;
-  _.$asComparable = [P.String];
   _.$isObject = TRUE;
   _ = P.List;
   _.$isList = TRUE;
@@ -21883,17 +21906,6 @@ $$ = null;
   _.$isMatch = TRUE;
   _.$isObject = TRUE;
   L.XmlNode.$isObject = TRUE;
-  _ = W.Element;
-  _.$isElement = TRUE;
-  _.$isNode = TRUE;
-  _.$isEventTarget = TRUE;
-  _.$isEventTarget = TRUE;
-  _.$isObject = TRUE;
-  A.LeafValueEditor.$isObject = TRUE;
-  _ = B.Widget;
-  _.$isWidget = TRUE;
-  _.$isUiObject = TRUE;
-  _.$isObject = TRUE;
   B.ValueBoxEditor.$isObject = TRUE;
   _ = P.bool;
   _.$isbool = TRUE;
@@ -21901,6 +21913,9 @@ $$ = null;
   _ = B.PopupPanel;
   _.$isWidget = TRUE;
   _.$isUiObject = TRUE;
+  _.$isObject = TRUE;
+  _ = W.NodeValidator;
+  _.$isNodeValidator = TRUE;
   _.$isObject = TRUE;
   _ = A.CreateInfo;
   _.$isCreateInfo = TRUE;
@@ -21922,9 +21937,6 @@ $$ = null;
   _.$isObject = TRUE;
   _ = A.SendInfo;
   _.$isSendInfo = TRUE;
-  _.$isObject = TRUE;
-  _ = W.NodeValidator;
-  _.$isNodeValidator = TRUE;
   _.$isObject = TRUE;
   Q.AttachEventHandler.$isObject = TRUE;
   P.Exception.$isObject = TRUE;
@@ -21979,12 +21991,6 @@ $$ = null;
   _ = P.Stream;
   _.$isStream = TRUE;
   _.$isObject = TRUE;
-  _ = Q.StorageUnitInfo;
-  _.$isStorageUnitInfo = TRUE;
-  _.$isObject = TRUE;
-  _ = Q.NetworkInterface;
-  _.$isNetworkInterface = TRUE;
-  _.$isObject = TRUE;
   Q.MouseOutHandler.$isObject = TRUE;
   Q.MouseOverHandler.$isObject = TRUE;
   Q.MouseMoveHandler.$isObject = TRUE;
@@ -21995,20 +22001,23 @@ $$ = null;
   _.$isObject = TRUE;
   K.Timer.$isObject = TRUE;
   Q.CloseHandler.$isObject = TRUE;
+  _ = Q.StorageUnitInfo;
+  _.$isStorageUnitInfo = TRUE;
+  _.$isObject = TRUE;
+  _ = Q.NetworkInterface;
+  _.$isNetworkInterface = TRUE;
+  _.$isObject = TRUE;
   H.RawReceivePortImpl.$isObject = TRUE;
   H._IsolateEvent.$isObject = TRUE;
   H._IsolateContext.$isObject = TRUE;
-  _ = Z.AppPortMapInfo;
-  _.$isAppPortMapInfo = TRUE;
-  _.$isObject = TRUE;
   _ = V.UpnpDeviceSearcher;
   _.$isUpnpDeviceSearcher = TRUE;
   _.$isObject = TRUE;
+  _ = V.UPnpDeviceInfo;
+  _.$isUPnpDeviceInfo = TRUE;
+  _.$isObject = TRUE;
   _ = V.HetiReceiveUdpInfo;
   _.$isHetiReceiveUdpInfo = TRUE;
-  _.$isObject = TRUE;
-  _ = P.StackTrace;
-  _.$isStackTrace = TRUE;
   _.$isObject = TRUE;
   _ = P._BufferingStreamSubscription;
   _.$is_BufferingStreamSubscription = TRUE;
@@ -22020,6 +22029,9 @@ $$ = null;
   _.$is_BufferingStreamSubscription = TRUE;
   _.$is_EventSink = TRUE;
   _.$isStreamSubscription = TRUE;
+  _.$isObject = TRUE;
+  _ = P.StackTrace;
+  _.$isStackTrace = TRUE;
   _.$isObject = TRUE;
   _ = V.HetiHttpMessageWithoutBody;
   _.$isHetiHttpMessageWithoutBody = TRUE;
@@ -22048,8 +22060,8 @@ $$ = null;
   _ = L.XmlNamed;
   _.$isXmlNamed = TRUE;
   _.$isObject = TRUE;
-  _ = V.UPnpDeviceInfo;
-  _.$isUPnpDeviceInfo = TRUE;
+  _ = Z.AppPortMapInfo;
+  _.$isAppPortMapInfo = TRUE;
   _.$isObject = TRUE;
   _ = Q.ChangeEvent;
   _.$isChangeEvent = TRUE;
@@ -22060,20 +22072,8 @@ $$ = null;
   _ = Q.ClickEvent;
   _.$isClickEvent = TRUE;
   _.$isObject = TRUE;
-  _ = V.HetiUdpSendInfo;
-  _.$isHetiUdpSendInfo = TRUE;
-  _.$isObject = TRUE;
-  _ = V.HetiNetworkInterface;
-  _.$isHetiNetworkInterface = TRUE;
-  _.$isObject = TRUE;
-  _ = Z.ChromeEnum;
-  _.$isChromeEnum = TRUE;
-  _.$isObject = TRUE;
   _ = V.UPnpPPPDeviceRequestResponse;
   _.$isUPnpPPPDeviceRequestResponse = TRUE;
-  _.$isObject = TRUE;
-  _ = V.UPnpGetGenericPortMappingResponse;
-  _.$isUPnpGetGenericPortMappingResponse = TRUE;
   _.$isObject = TRUE;
   _ = Q.MouseDownEvent;
   _.$isMouseDownEvent = TRUE;
@@ -22093,21 +22093,30 @@ $$ = null;
   _ = Q.NativePreviewEvent;
   _.$isNativePreviewEvent = TRUE;
   _.$isObject = TRUE;
+  _ = V.HetiNetworkInterface;
+  _.$isHetiNetworkInterface = TRUE;
+  _.$isObject = TRUE;
+  _ = Z.ChromeEnum;
+  _.$isChromeEnum = TRUE;
+  _.$isObject = TRUE;
+  _ = V.UPnpGetGenericPortMappingResponse;
+  _.$isUPnpGetGenericPortMappingResponse = TRUE;
+  _.$isObject = TRUE;
+  _ = V.HetiUdpSendInfo;
+  _.$isHetiUdpSendInfo = TRUE;
+  _.$isObject = TRUE;
+  _ = W._Html5NodeValidator;
+  _.$is_Html5NodeValidator = TRUE;
+  _.$isNodeValidator = TRUE;
+  _.$isObject = TRUE;
   _ = P.JsObject;
   _.$isJsObject = TRUE;
   _.$isObject = TRUE;
   _ = P.Comparable;
   _.$isComparable = TRUE;
   _.$isObject = TRUE;
-  _ = W._Html5NodeValidator;
-  _.$is_Html5NodeValidator = TRUE;
-  _.$isNodeValidator = TRUE;
-  _.$isObject = TRUE;
   _ = W.EventTarget;
   _.$isEventTarget = TRUE;
-  _.$isObject = TRUE;
-  _ = P.Iterator;
-  _.$isIterator = TRUE;
   _.$isObject = TRUE;
   _ = P._EventSink;
   _.$is_EventSink = TRUE;
@@ -22115,28 +22124,31 @@ $$ = null;
   _ = P._DelayedEvent;
   _.$is_DelayedEvent = TRUE;
   _.$isObject = TRUE;
-  _ = P.Iterable;
-  _.$isIterable = TRUE;
+  _ = P.Iterator;
+  _.$isIterator = TRUE;
   _.$isObject = TRUE;
   _ = E.Parser;
   _.$isParser = TRUE;
   _.$isObject = TRUE;
-  _ = P.Function;
-  _.$isFunction = TRUE;
-  _.$isObject = TRUE;
   _ = E.Result;
   _.$isResult = TRUE;
+  _.$isObject = TRUE;
+  _ = V.ChunkedBuilderAdapter;
+  _.$isChunkedBuilderAdapter = TRUE;
   _.$isObject = TRUE;
   _ = P.DateTime;
   _.$isDateTime = TRUE;
   _.$isComparable = TRUE;
   _.$asComparable = [null];
   _.$isObject = TRUE;
-  _ = V.ChunkedBuilderAdapter;
-  _.$isChunkedBuilderAdapter = TRUE;
-  _.$isObject = TRUE;
   _ = B.UiObject;
   _.$isUiObject = TRUE;
+  _.$isObject = TRUE;
+  _ = P.Function;
+  _.$isFunction = TRUE;
+  _.$isObject = TRUE;
+  _ = P.Iterable;
+  _.$isIterable = TRUE;
   _.$isObject = TRUE;
   _ = E.AnimationHandle;
   _.$isAnimationHandle = TRUE;
@@ -23015,7 +23027,7 @@ Isolate.$lazy($, "mainView", "mainView", "get$mainView", function() {
   t1 = document.createElement("select", null);
   t2 = new B.ListBox(0, null, false, null, null, null);
   if (t1 != null)
-    t2._dart_web_toolkit_ui$_element = t1;
+    t2._element = t1;
   t2.ListBox$2(false, null);
   return new Z.MainView(t2, B.VerticalPanel$(), B.VerticalPanel$(), B.VerticalPanel$(), B.VerticalPanel$(), B.VerticalPanel$(), P.StreamController_StreamController$broadcast(null, null, false, null), P.StreamController_StreamController$broadcast(null, null, false, null), P.StreamController_StreamController$broadcast(null, null, false, null), P.StreamController_StreamController$broadcast(null, null, false, null), P.StreamController_StreamController$broadcast(null, null, false, null), B.Html$("", null), [], []);
 });
