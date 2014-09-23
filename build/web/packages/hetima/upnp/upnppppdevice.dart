@@ -31,7 +31,7 @@ class UPnpPPPDevice {
    *  402 Invalid Args See UPnP Device Architecture section on Control. 
    *  713 SpecifiedArrayIndexInvalid The specified array index is out of bounds 
    */
-  async.Future<UPnpGetGenericPortMappingResponse> requestGetGenericPortMapping(int newPortMappingIndex, [UPnpDeviceServiceInfo serviceInfo = null]) {
+  async.Future<UPnpGetGenericPortMappingResponse> requestGetGenericPortMapping(int newPortMappingIndex, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
     async.Completer<String> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
@@ -44,7 +44,7 @@ class UPnpPPPDevice {
     String requestBody = """<?xml version="1.0"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body><m:GetGenericPortMappingEntry xmlns:m="urn:schemas-upnp-org:service:${_serviceName}:${_version}"><NewPortMappingIndex>${newPortMappingIndex}</NewPortMappingIndex></m:GetGenericPortMappingEntry></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n""";
     String headerValue = """\"urn:schemas-upnp-org:service:${_serviceName}:${_version}#GetGenericPortMappingEntry\"""";
 
-    request(serviceInfo, headerValue, requestBody).then((UPnpPPPDeviceRequestResponse response) {
+    request(serviceInfo, headerValue, requestBody, mode).then((UPnpPPPDeviceRequestResponse response) {
       completer.complete(new UPnpGetGenericPortMappingResponse(response));
     }).catchError((e) {
       completer.completeError(e);
@@ -55,7 +55,7 @@ class UPnpPPPDevice {
   /**
    * return resultCode. if success then. return 200. ;
    */
-  async.Future<int> requestAddPortMapping(int newExternalPort, String newProtocol, int newInternalPort, String newInternalClient, int newEnabled, String newPortMappingDescription, int newLeaseDuration, [UPnpDeviceServiceInfo serviceInfo = null]) {
+  async.Future<int> requestAddPortMapping(int newExternalPort, String newProtocol, int newInternalPort, String newInternalClient, int newEnabled, String newPortMappingDescription, int newLeaseDuration, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
     async.Completer<int> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
@@ -67,7 +67,7 @@ class UPnpPPPDevice {
     String headerValue = """\"urn:schemas-upnp-org:service:${_serviceName}:${_version}#AddPortMapping\"""";
     String requestBody = """<?xml version="1.0"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body><m:AddPortMapping xmlns:m="urn:schemas-upnp-org:service:${_serviceName}:${_version}">""" + """<NewRemoteHost></NewRemoteHost><NewExternalPort>${newExternalPort}</NewExternalPort><NewProtocol>${newProtocol}</NewProtocol><NewInternalPort>${newInternalPort}</NewInternalPort><NewInternalClient>${newInternalClient}</NewInternalClient><NewEnabled>${newEnabled}</NewEnabled><NewPortMappingDescription>${newPortMappingDescription}</NewPortMappingDescription><NewLeaseDuration>${newLeaseDuration}</NewLeaseDuration></m:AddPortMapping></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n""";
 
-    request(serviceInfo, headerValue, requestBody).then((UPnpPPPDeviceRequestResponse response) {
+    request(serviceInfo, headerValue, requestBody, mode).then((UPnpPPPDeviceRequestResponse response) {
       if (response.resultCode == 200) {
         completer.complete(response.resultCode);
       } else {
@@ -79,7 +79,7 @@ class UPnpPPPDevice {
     return completer.future;
   }
 
-  async.Future<int> requestDeletePortMapping(int newExternalPort, String newProtocol, [UPnpDeviceServiceInfo serviceInfo = null]) {
+  async.Future<int> requestDeletePortMapping(int newExternalPort, String newProtocol, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
     async.Completer<int> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
@@ -90,7 +90,7 @@ class UPnpPPPDevice {
     }
     String requestBody = """<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:DeletePortMapping xmlns:m=\"urn:schemas-upnp-org:service:${_serviceName}:${_version}\">""" + """<NewRemoteHost></NewRemoteHost><NewExternalPort>${newExternalPort}</NewExternalPort><NewProtocol>${newProtocol}</NewProtocol></m:DeletePortMapping></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n""";
     String headerValue = """\"urn:schemas-upnp-org:service:${_serviceName}:${_version}#DeletePortMapping\"""";
-    request(serviceInfo, headerValue, requestBody).then((UPnpPPPDeviceRequestResponse response) {
+    request(serviceInfo, headerValue, requestBody, mode).then((UPnpPPPDeviceRequestResponse response) {
       if (response.resultCode == 200) {
         completer.complete(response.resultCode);
       } else {
@@ -103,7 +103,7 @@ class UPnpPPPDevice {
   }
 
 
-  async.Future<String> requestGetExternalIPAddress([UPnpDeviceServiceInfo serviceInfo = null]) {
+  async.Future<String> requestGetExternalIPAddress([int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
     async.Completer<String> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
@@ -115,7 +115,7 @@ class UPnpPPPDevice {
     String headerValue = """\"urn:schemas-upnp-org:service:${_serviceName}:${_version}#GetExternalIPAddress\"""";
     String requestBody = """<?xml version="1.0"?>\r\n<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body><m:GetExternalIPAddress xmlns:m="urn:schemas-upnp-org:service:${_serviceName}:${_version}"></m:GetExternalIPAddress></s:Body></s:Envelope>\r\n""";
 
-    request(serviceInfo, headerValue, requestBody).then((UPnpPPPDeviceRequestResponse response) {
+    request(serviceInfo, headerValue, requestBody, mode).then((UPnpPPPDeviceRequestResponse response) {
       xml.XmlDocument document = xml.parse(response.body);
       Iterable<xml.XmlElement> elements = document.findAllElements("NewExternalIPAddress");
       if (elements.length > 0) {
@@ -139,7 +139,10 @@ class UPnpPPPDevice {
     return deviceInfo;
   }
 
-  async.Future<UPnpPPPDeviceRequestResponse> request(UPnpDeviceServiceInfo info, String soapAction, String body) {
+  static const int MODE_M_POST = 0;
+  static const int MODE_POST = 1;
+
+  async.Future<UPnpPPPDeviceRequestResponse> request(UPnpDeviceServiceInfo info, String soapAction, String body, int mode) {
     async.Completer<UPnpPPPDeviceRequestResponse> completer = new async.Completer();
     HetiSocket socket = _base.getSocketBuilder().createClient();
     String location = _base.getValue(UPnpDeviceInfo.KEY_LOCATION, "");
@@ -163,10 +166,18 @@ class UPnpPPPDevice {
       path = info.controlURL;
     }
     client.connect(host, port).then((int v) {
+      if(mode == MODE_POST) {
       return client.post(path, convert.UTF8.encode(body), {
         KEY_SOAPACTION: soapAction,
         "Content-Type": "text/xml"
       });
+      } else {
+        return client.mpost(path, convert.UTF8.encode(body), {
+          "MAN": "\"http://schemas.xmlsoap.org/soap/envelope/\"; ns=01",
+          "01-SOAPACTION": soapAction,
+          "Content-Type": "text/xml"
+        });
+      }
     }).then((HetiHttpClientResponse response) {
       return response.body.onFin().then((bool v) {
         return response.body.getLength();

@@ -98,7 +98,7 @@ class UPnpDeviceInfo {
 
   String _extractFirstValue(xml.XmlElement element, String key, String defaultValue) {
     Iterable<xml.XmlElement> elements = element.findAllElements(key);
-    if(null == elements.first || elements.first.text == null) {
+    if(elements == null ||elements.length == 0 || null == elements.first || elements.first.text == null) {
       return defaultValue;
     } 
     

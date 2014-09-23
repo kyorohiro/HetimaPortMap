@@ -107,6 +107,45 @@ class HetiHttpClient {
     return completer.future;
   }
 
+  //
+  // mpost
+  //
+  async.Future<HetiHttpClientResponse> mpost(String path, List<int> body, [Map<String, String> header]) {
+    async.Completer<HetiHttpClientResponse> completer = new async.Completer();
+
+    Map<String, String> headerTmp = {};
+    headerTmp["Host"] = host+":"+port.toString();
+    headerTmp["Connection"] = "Close";
+    if (header != null) {
+      for (String key in header.keys) {
+        headerTmp[key] = header[key];
+      }
+    }
+    headerTmp[RfcTable.HEADER_FIELD_CONTENT_LENGTH] = body.length.toString();
+
+    ArrayBuilder builder = new ArrayBuilder();
+    builder.appendString("M-POST" + " " + path + " " + "HTTP/1.1" + "\r\n");
+    for (String key in headerTmp.keys) {
+      builder.appendString("" + key + ": " + headerTmp[key] + "\r\n");
+    }
+
+    builder.appendString("\r\n");
+    builder.appendIntList(body, 0, body.length);
+
+    //
+    builder.getLength().then((int len) {
+    builder.getByteFuture(0,len).then((List<int> data) {
+      print("request\r\n"+convert.UTF8.decode(data));
+    });
+    });
+    //
+    socket.onReceive().listen((HetiReceiveInfo info) {});
+    socket.send(builder.toList()).then((HetiSendInfo info) {});
+
+    handleResponse(completer);
+    return completer.future;
+  }
+
   void handleResponse(async.Completer<HetiHttpClientResponse> completer) {
     EasyParser parser = new EasyParser(socket.buffer);
     HetiHttpResponse.decodeHttpMessage(parser).then((HetiHttpMessageWithoutBody message) {

@@ -54,6 +54,7 @@ class MainView {
 
   void clearPortMappInfo() {
     portMapList.clear();
+    updateRouterList();
   }
   void addPortMappInfo(AppPortMapInfo info) {
     portMapList.add(info);
