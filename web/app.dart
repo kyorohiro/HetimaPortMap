@@ -125,8 +125,15 @@ void startUpdatePortMappedList() {
   List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
   int newPortmappingIndex = 0;
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
+  int mode = hetima.UPnpPPPDevice.MODE_POST;
   requestPortMapInfo() {
-    pppDevice.requestGetGenericPortMapping(newPortmappingIndex).then((hetima.UPnpGetGenericPortMappingResponse r) {
+    pppDevice.requestGetGenericPortMapping(newPortmappingIndex, mode).then((hetima.UPnpGetGenericPortMappingResponse r) {
+      if (r.resultCode == -405 && mode == hetima.UPnpPPPDevice.MODE_POST)  {
+        mode = hetima.UPnpPPPDevice.MODE_M_POST;
+        requestPortMapInfo();
+        return;        
+      }
+
       if (r.resultCode != 200) {
         return;
       }
