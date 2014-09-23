@@ -91,6 +91,7 @@ void startUpdateIpInfo() {
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
   pppDevice.requestGetExternalIPAddress().then((hetima.UPnpGetExternalIPAddressResponse ip) {
     if (ip.resultCode == -405) {
+      //retry at mpost request
       return pppDevice.requestGetExternalIPAddress(hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpGetExternalIPAddressResponse ip) {
         mainView.setGlobalIp(ip.externalIp);
       });
@@ -100,6 +101,7 @@ void startUpdateIpInfo() {
   }).catchError((e) {
     mainView.setGlobalIp("failed");
   });
+
   (new hetimacl.HetiSocketBuilderChrome()).getNetworkInterfaces().then((List<hetima.HetiNetworkInterface> interfaceList) {
     mainView.clearNetworkInterface();
     for (hetima.HetiNetworkInterface i in interfaceList) {
@@ -161,6 +163,12 @@ void startSearchPPPDevice() {
   });
 }
 
+void _showDialog(String title, String message) {
+  ui.DialogBox dialogBox = appview.createDialogBox(title, new ui.Html(message));
+  dialogBox.show();
+  dialogBox.center();
+}
+
 void startAddPortMapp(appview.AppPortMapInfo i) {
   hetima.UPnpDeviceInfo info = getCurrentRouter();
   if (info == null) {
@@ -168,18 +176,24 @@ void startAddPortMapp(appview.AppPortMapInfo i) {
   }
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
 
-  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0).then((int v) {
+  showDialogAPM(hetima.UPnpAddPortMappingResponse resp) {
     String result = "OK";
-    if (v != 200) {
-      result = " $result resultCode = ${v}";
+    if (resp.resultCode != 200) {
+      result = " $result resultCode = ${resp.resultCode}";
     }
-    ui.DialogBox dialogBox = appview.createDialogBox("#### Port Map ####", new ui.Html(result));
-    dialogBox.show();
-    dialogBox.center();
+    _showDialog("#### Port Map ####", result);    
+  };
+  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0)
+  .then((hetima.UPnpAddPortMappingResponse resp) {
+    if (resp.resultCode == -405) {
+      return pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0, hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpAddPortMappingResponse resp) {
+        showDialogAPM(resp);
+      });
+    } else {
+      showDialogAPM(resp);
+    }
   }).catchError((e) {
-    ui.DialogBox dialogBox = appview.createDialogBox("#### ERROR ####", new ui.Html("failed add port mapping"));
-    dialogBox.show();
-    dialogBox.center();
+    _showDialog("#### ERROR ####", "failed add port mapping");
   });
 }
 
@@ -190,17 +204,24 @@ void startDeletePortMapp(appview.AppPortMapInfo i) {
   }
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
 
-  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((int v) {
+  showDialogDPM(hetima.UPnpDeletePortMappingResponse resp) {
     String result = "OK";
-    if (v != 200) {
-      result = " $result resultCode = ${v}";
+    if (resp.resultCode != 200) {
+      result = " $result resultCode = ${resp.resultCode}";
     }
-    ui.DialogBox dialogBox = appview.createDialogBox("#### Port Map ####", new ui.Html(result));
-    dialogBox.show();
-    dialogBox.center();
+    _showDialog("#### Port Map ####", result);
+  };
+  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol)
+  .then((hetima.UPnpDeletePortMappingResponse resp) {
+    if (resp.resultCode == -405) {
+      return pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol, hetima.UPnpPPPDevice.MODE_M_POST)
+      .then((hetima.UPnpDeletePortMappingResponse resp) {
+        showDialogDPM(resp);
+      });
+    } else {
+      showDialogDPM(resp);      
+    }
   }).catchError((e) {
-    ui.DialogBox dialogBox = appview.createDialogBox("#### ERROR ####", new ui.Html("failed add port mapping"));
-    dialogBox.show();
-    dialogBox.center();
+    _showDialog("#### ERROR ####", "failed delete port mapping");
   });
 }
