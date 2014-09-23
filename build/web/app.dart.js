@@ -18750,9 +18750,9 @@ var $$ = {};
       var completer, t1, t2;
       completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
       t1 = this._socket;
-      t2 = $.get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnection();
-      t1.send$3(0, C.Utf8Codec_false.get$encoder().convert$1(t2), $.UpnpDeviceSearcher_SSDP_ADDRESS, $.UpnpDeviceSearcher_SSDP_PORT).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure()).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure0(this)).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure1()).catchError$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure2(completer));
-      P.Future_Future$delayed(P.Duration$(0, 0, 0, 0, 0, 4), new V.UpnpDeviceSearcher_searchWanPPPDevice_closure3(completer), null);
+      t2 = $.get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnectionV1();
+      t1.send$3(0, C.Utf8Codec_false.get$encoder().convert$1(t2), $.UpnpDeviceSearcher_SSDP_ADDRESS, $.UpnpDeviceSearcher_SSDP_PORT).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure()).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure0(this)).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure1(this)).then$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure2()).catchError$1(new V.UpnpDeviceSearcher_searchWanPPPDevice_closure3(completer));
+      P.Future_Future$delayed(P.Duration$(0, 0, 0, 0, 0, 4), new V.UpnpDeviceSearcher_searchWanPPPDevice_closure4(completer), null);
       return completer.future;
     },
     extractDeviceInfoFromUdpResponse$1: function(buffer) {
@@ -18764,7 +18764,7 @@ var $$ = {};
       builder.appendIntList$3(buffer, 0, J.get$length$asx(buffer));
       V.HetiHttpResponse_decodeHttpMessage(parser).then$1(new V.UpnpDeviceSearcher_extractDeviceInfoFromUdpResponse_closure(this));
     },
-    static: {"^": "UpnpDeviceSearcher_SSDP_ADDRESS,UpnpDeviceSearcher_SSDP_PORT,UpnpDeviceSearcher_SSDP_M_SEARCH,UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnection,UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnection", UpnpDeviceSearcher_createInstance: function(builder) {
+    static: {"^": "UpnpDeviceSearcher_SSDP_ADDRESS,UpnpDeviceSearcher_SSDP_PORT,UpnpDeviceSearcher_SSDP_M_SEARCH,UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnectionV1,UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV1,UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV2", UpnpDeviceSearcher_createInstance: function(builder) {
         var completer, ret;
         completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
         ret = new V.UpnpDeviceSearcher([], null, P.StreamController_StreamController$broadcast(null, null, false, null), null);
@@ -18814,29 +18814,40 @@ var $$ = {};
     call$1: [function(d) {
       var t1, t2;
       t1 = this.this_0._socket;
-      t2 = $.get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnection();
+      t2 = $.get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV1();
       return t1.send$3(0, C.Utf8Codec_false.get$encoder().convert$1(t2), $.UpnpDeviceSearcher_SSDP_ADDRESS, $.UpnpDeviceSearcher_SSDP_PORT);
     }, "call$1", null, 2, 0, null, 103, "call"],
     $isFunction: true
   },
   UpnpDeviceSearcher_searchWanPPPDevice_closure1: {
-    "^": "Closure:129;",
+    "^": "Closure:129;this_1",
     call$1: [function(iii) {
+      var t1, t2;
       P.print(C.JSString_methods.$add("###send[B]=", J.toString$0(iii.get$resultCode())));
+      t1 = this.this_1._socket;
+      t2 = $.get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV2();
+      return t1.send$3(0, C.Utf8Codec_false.get$encoder().convert$1(t2), $.UpnpDeviceSearcher_SSDP_ADDRESS, $.UpnpDeviceSearcher_SSDP_PORT);
     }, "call$1", null, 2, 0, null, 128, "call"],
     $isFunction: true
   },
   UpnpDeviceSearcher_searchWanPPPDevice_closure2: {
-    "^": "Closure:20;completer_1",
-    call$1: [function(e) {
-      this.completer_1.completeError$1(e);
-    }, "call$1", null, 2, 0, null, 2, "call"],
+    "^": "Closure:129;",
+    call$1: [function(iii) {
+      P.print(C.JSString_methods.$add("###send[C]=", J.toString$0(iii.get$resultCode())));
+    }, "call$1", null, 2, 0, null, 128, "call"],
     $isFunction: true
   },
   UpnpDeviceSearcher_searchWanPPPDevice_closure3: {
-    "^": "Closure:50;completer_2",
+    "^": "Closure:20;completer_2",
+    call$1: [function(e) {
+      this.completer_2.completeError$1(e);
+    }, "call$1", null, 2, 0, null, 2, "call"],
+    $isFunction: true
+  },
+  UpnpDeviceSearcher_searchWanPPPDevice_closure4: {
+    "^": "Closure:50;completer_3",
     call$0: function() {
-      var t1 = this.completer_2.future;
+      var t1 = this.completer_3.future;
       if (t1._state !== 0)
         H.throwExpression(P.StateError$("Future already completed"));
       t1._asyncComplete$1(0);
@@ -18868,7 +18879,7 @@ var $$ = {};
     $isFunction: true
   },
   UPnpPPPDevice: {
-    "^": "Object;_base,_serviceName",
+    "^": "Object;_base,_serviceName,_version",
     requestGetGenericPortMapping$2: function(newPortMappingIndex, serviceInfo) {
       var completer, requestBody;
       completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
@@ -18877,23 +18888,21 @@ var $$ = {};
         return completer.future;
       }
       serviceInfo = C.JSArray_methods.get$first(this.getPPPService$0());
-      requestBody = "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:GetGenericPortMappingEntry xmlns:m=\"urn:schemas-upnp-org:service:" + this._serviceName + ":1\"><NewPortMappingIndex>" + newPortMappingIndex + "</NewPortMappingIndex></m:GetGenericPortMappingEntry></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n";
-      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + this._serviceName + ":1#GetGenericPortMappingEntry\"", requestBody).then$1(new V.UPnpPPPDevice_requestGetGenericPortMapping_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestGetGenericPortMapping_closure0(completer));
+      requestBody = "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:GetGenericPortMappingEntry xmlns:m=\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "\"><NewPortMappingIndex>" + newPortMappingIndex + "</NewPortMappingIndex></m:GetGenericPortMappingEntry></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n";
+      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "#GetGenericPortMappingEntry\"", requestBody).then$1(new V.UPnpPPPDevice_requestGetGenericPortMapping_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestGetGenericPortMapping_closure0(completer));
       return completer.future;
     },
     requestGetGenericPortMapping$1: function(newPortMappingIndex) {
       return this.requestGetGenericPortMapping$2(newPortMappingIndex, null);
     },
     requestAddPortMapping$8: function(newExternalPort, newProtocol, newInternalPort, newInternalClient, newEnabled, newPortMappingDescription, newLeaseDuration, serviceInfo) {
-      var completer, t1;
-      completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
+      var completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
       if (this.getPPPService$0().length === 0) {
         completer.completeError$1(P.LinkedHashMap_LinkedHashMap$_empty(null, null));
         return completer.future;
       }
       serviceInfo = C.JSArray_methods.get$first(this.getPPPService$0());
-      t1 = this._serviceName;
-      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + t1 + ":1#AddPortMapping\"", "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:AddPortMapping xmlns:m=\"urn:schemas-upnp-org:service:" + t1 + ":1\">" + ("<NewRemoteHost></NewRemoteHost><NewExternalPort>" + H.S(newExternalPort) + "</NewExternalPort><NewProtocol>" + H.S(newProtocol) + "</NewProtocol><NewInternalPort>" + H.S(newInternalPort) + "</NewInternalPort><NewInternalClient>" + H.S(newInternalClient) + "</NewInternalClient><NewEnabled>" + newEnabled + "</NewEnabled><NewPortMappingDescription>" + H.S(newPortMappingDescription) + "</NewPortMappingDescription><NewLeaseDuration>" + newLeaseDuration + "</NewLeaseDuration></m:AddPortMapping></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n")).then$1(new V.UPnpPPPDevice_requestAddPortMapping_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestAddPortMapping_closure0(completer));
+      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "#AddPortMapping\"", "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:AddPortMapping xmlns:m=\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "\">" + ("<NewRemoteHost></NewRemoteHost><NewExternalPort>" + H.S(newExternalPort) + "</NewExternalPort><NewProtocol>" + H.S(newProtocol) + "</NewProtocol><NewInternalPort>" + H.S(newInternalPort) + "</NewInternalPort><NewInternalClient>" + H.S(newInternalClient) + "</NewInternalClient><NewEnabled>" + newEnabled + "</NewEnabled><NewPortMappingDescription>" + H.S(newPortMappingDescription) + "</NewPortMappingDescription><NewLeaseDuration>" + newLeaseDuration + "</NewLeaseDuration></m:AddPortMapping></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n")).then$1(new V.UPnpPPPDevice_requestAddPortMapping_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestAddPortMapping_closure0(completer));
       return completer.future;
     },
     requestAddPortMapping$7: function(newExternalPort, newProtocol, newInternalPort, newInternalClient, newEnabled, newPortMappingDescription, newLeaseDuration) {
@@ -18907,23 +18916,21 @@ var $$ = {};
         return completer.future;
       }
       serviceInfo = C.JSArray_methods.get$first(this.getPPPService$0());
-      requestBody = "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:DeletePortMapping xmlns:m=\"urn:schemas-upnp-org:service:" + this._serviceName + ":1\">" + ("<NewRemoteHost></NewRemoteHost><NewExternalPort>" + H.S(newExternalPort) + "</NewExternalPort><NewProtocol>" + H.S(newProtocol) + "</NewProtocol></m:DeletePortMapping></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n");
-      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + this._serviceName + ":1#DeletePortMapping\"", requestBody).then$1(new V.UPnpPPPDevice_requestDeletePortMapping_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestDeletePortMapping_closure0(completer));
+      requestBody = "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body><m:DeletePortMapping xmlns:m=\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "\">" + ("<NewRemoteHost></NewRemoteHost><NewExternalPort>" + H.S(newExternalPort) + "</NewExternalPort><NewProtocol>" + H.S(newProtocol) + "</NewProtocol></m:DeletePortMapping></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n");
+      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "#DeletePortMapping\"", requestBody).then$1(new V.UPnpPPPDevice_requestDeletePortMapping_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestDeletePortMapping_closure0(completer));
       return completer.future;
     },
     requestDeletePortMapping$2: function(newExternalPort, newProtocol) {
       return this.requestDeletePortMapping$3(newExternalPort, newProtocol, null);
     },
     requestGetExternalIPAddress$1: function(serviceInfo) {
-      var completer, t1;
-      completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
+      var completer = H.setRuntimeTypeInfo(new P._AsyncCompleter(P._Future$(null)), [null]);
       if (this.getPPPService$0().length === 0) {
         completer.completeError$1(P.LinkedHashMap_LinkedHashMap$_empty(null, null));
         return completer.future;
       }
       serviceInfo = C.JSArray_methods.get$first(this.getPPPService$0());
-      t1 = this._serviceName;
-      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + t1 + ":1#GetExternalIPAddress\"", "<?xml version=\"1.0\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><m:GetExternalIPAddress xmlns:m=\"urn:schemas-upnp-org:service:" + t1 + ":1\"></m:GetExternalIPAddress></s:Body></s:Envelope>\r\n").then$1(new V.UPnpPPPDevice_requestGetExternalIPAddress_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestGetExternalIPAddress_closure0(completer));
+      this.request$3(serviceInfo, "\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "#GetExternalIPAddress\"", "<?xml version=\"1.0\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><s:Body><m:GetExternalIPAddress xmlns:m=\"urn:schemas-upnp-org:service:" + this._serviceName + ":" + H.S(this._version) + "\"></m:GetExternalIPAddress></s:Body></s:Envelope>\r\n").then$1(new V.UPnpPPPDevice_requestGetExternalIPAddress_closure(completer)).catchError$1(new V.UPnpPPPDevice_requestGetExternalIPAddress_closure0(completer));
       return completer.future;
     },
     requestGetExternalIPAddress$0: function() {
@@ -18977,12 +18984,18 @@ var $$ = {};
       return completer.future;
     },
     UPnpPPPDevice$1: function(base) {
+      var st, t1;
       this._base = base;
-      if (J.contains$1$asx(base.getValue$2("ST", "WANIPConnection"), "WANIPConnection") === true)
+      st = base.getValue$2("ST", "WANIPConnection");
+      t1 = J.getInterceptor$asx(st);
+      if (t1.contains$1(st, "WANIPConnection") === true)
         this._serviceName = "WANIPConnection";
+      t1 = C.JSArray_methods.get$last(t1.replaceAll$2(st, " |\t|\r|\n", "").split(":"));
+      this._version = t1;
+      P.print(H.S(t1));
     },
     static: {"^": "UPnpPPPDevice_KEY_SOAPACTION,UPnpPPPDevice_VALUE_PORT_MAPPING_PROTOCOL_UDP,UPnpPPPDevice_VALUE_PORT_MAPPING_PROTOCOL_TCP,UPnpPPPDevice_VALUE_ENABLE,UPnpPPPDevice_VALUE_DISABLE", UPnpPPPDevice$: function(base) {
-        var t1 = new V.UPnpPPPDevice(null, "WANPPPConnection");
+        var t1 = new V.UPnpPPPDevice(null, "WANPPPConnection", "1");
         t1.UPnpPPPDevice$1(base);
         return t1;
       }}
@@ -23187,11 +23200,14 @@ Isolate.$lazy($, "_widgetsToDetach", "RootPanel__widgetsToDetach", "get$RootPane
 Isolate.$lazy($, "_timers", "Timer__timers", "get$Timer__timers", function() {
   return H.setRuntimeTypeInfo([], [K.Timer]);
 });
-Isolate.$lazy($, "SSDP_M_SEARCH_WANPPPConnection", "UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnection", "get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnection", function() {
+Isolate.$lazy($, "SSDP_M_SEARCH_WANPPPConnectionV1", "UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnectionV1", "get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANPPPConnectionV1", function() {
   return "M-SEARCH * HTTP/1.1\r\nMX: 3\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nST: urn:schemas-upnp-org:service:WANPPPConnection:1\r\n\r\n";
 });
-Isolate.$lazy($, "SSDP_M_SEARCH_WANIPConnection", "UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnection", "get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnection", function() {
+Isolate.$lazy($, "SSDP_M_SEARCH_WANIPConnectionV1", "UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV1", "get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV1", function() {
   return "M-SEARCH * HTTP/1.1\r\nMX: 3\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nST: urn:schemas-upnp-org:service:WANIPConnection:1\r\n\r\n";
+});
+Isolate.$lazy($, "SSDP_M_SEARCH_WANIPConnectionV2", "UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV2", "get$UpnpDeviceSearcher_SSDP_M_SEARCH_WANIPConnectionV2", function() {
+  return "M-SEARCH * HTTP/1.1\r\nMX: 3\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nST: urn:schemas-upnp-org:service:WANIPConnection:2\r\n\r\n";
 });
 Isolate.$lazy($, "SCHEME_HTTP", "HttpUrlDecoder_SCHEME_HTTP", "get$HttpUrlDecoder_SCHEME_HTTP", function() {
   return C.Utf8Codec_false.get$encoder().convert$1("http://");

@@ -5,8 +5,9 @@ class UpnpDeviceSearcher {
   static String SSDP_ADDRESS = "239.255.255.250";
   static int SSDP_PORT = 1900;
   static String SSDP_M_SEARCH = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: upnp:rootdevice\r\n""" + """\r\n""";
-  static String SSDP_M_SEARCH_WANPPPConnection = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: urn:schemas-upnp-org:service:WANPPPConnection:1\r\n""" + """\r\n""";
-  static String SSDP_M_SEARCH_WANIPConnection = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: urn:schemas-upnp-org:service:WANIPConnection:1\r\n""" + """\r\n""";
+  static String SSDP_M_SEARCH_WANPPPConnectionV1 = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: urn:schemas-upnp-org:service:WANPPPConnection:1\r\n""" + """\r\n""";
+  static String SSDP_M_SEARCH_WANIPConnectionV1 = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: urn:schemas-upnp-org:service:WANIPConnection:1\r\n""" + """\r\n""";
+  static String SSDP_M_SEARCH_WANIPConnectionV2 = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: urn:schemas-upnp-org:service:WANIPConnection:2\r\n""" + """\r\n""";
 
   List<UPnpDeviceInfo> deviceInfoList = new List();
   HetiUdpSocket _socket = null;
@@ -51,12 +52,15 @@ class UpnpDeviceSearcher {
   async.Future<int> searchWanPPPDevice() {
     async.Completer completer = new async.Completer();
 
-    _socket.send(convert.UTF8.encode(SSDP_M_SEARCH_WANPPPConnection), SSDP_ADDRESS, SSDP_PORT).then((HetiUdpSendInfo iii) {
+    _socket.send(convert.UTF8.encode(SSDP_M_SEARCH_WANPPPConnectionV1), SSDP_ADDRESS, SSDP_PORT).then((HetiUdpSendInfo iii) {
       print("###send[A]=" + iii.resultCode.toString());
     }).then((d) {
-      return _socket.send(convert.UTF8.encode(SSDP_M_SEARCH_WANIPConnection), SSDP_ADDRESS, SSDP_PORT);
+      return _socket.send(convert.UTF8.encode(SSDP_M_SEARCH_WANIPConnectionV1), SSDP_ADDRESS, SSDP_PORT);
     }).then((HetiUdpSendInfo iii) {
       print("###send[B]=" + iii.resultCode.toString());
+      return _socket.send(convert.UTF8.encode(SSDP_M_SEARCH_WANIPConnectionV2), SSDP_ADDRESS, SSDP_PORT);
+    }).then((HetiUdpSendInfo iii) {
+      print("###send[C]=" + iii.resultCode.toString());
     }).catchError((e) {
       completer.completeError(e);
     });
