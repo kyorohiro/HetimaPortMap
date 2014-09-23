@@ -111,6 +111,8 @@ void startUpdateIpInfo() {
       mainView.addNetworkInterface(interface);
     }
   });
+  
+  mainView.setRouterAddress(info.presentationURL);
 }
 
 void startUpdatePortMappedList() {
