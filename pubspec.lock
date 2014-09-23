@@ -28,10 +28,10 @@ packages:
   hetima:
     description:
       ref: null
-      resolved-ref: "6ac6278aeaee1fc3645ff82e62e4252058e3a571"
+      resolved-ref: "3396223d8f765fb2377f99fa6ca4d25203eae01e"
       url: "https://github.com/kyorohiro/dart_hetimalib.git"
     source: git
-    version: "0.0.035"
+    version: "0.0.100"
   matcher:
     description: matcher
     source: hosted

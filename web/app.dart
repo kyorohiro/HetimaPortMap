@@ -20,6 +20,7 @@ void main() {
   setupUI();
   setupUpnp();
 }
+
 void setupUI() {
   mainView.intialize();
   mainView.onClickSearchButton.listen((int v) {
@@ -88,8 +89,14 @@ void startUpdateIpInfo() {
   }
 
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
-  pppDevice.requestGetExternalIPAddress().then((String ip) {
-    mainView.setGlobalIp(ip);
+  pppDevice.requestGetExternalIPAddress().then((hetima.UPnpGetExternalIPAddressResponse ip) {
+    if (ip.resultCode == -405) {
+      return pppDevice.requestGetExternalIPAddress(hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpGetExternalIPAddressResponse ip) {
+        mainView.setGlobalIp(ip.externalIp);
+      });
+    } else {
+      mainView.setGlobalIp(ip.externalIp);
+    }
   }).catchError((e) {
     mainView.setGlobalIp("failed");
   });
