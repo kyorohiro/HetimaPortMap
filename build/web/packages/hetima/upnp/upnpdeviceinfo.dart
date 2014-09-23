@@ -23,6 +23,11 @@ class UPnpDeviceInfo {
     }
   }
 
+  String get presentationURL {
+    xml.XmlDocument document = xml.parse(_serviceXml);
+    return _extractFirstValue(document.root, "presentationURL", "");
+  }
+
   @override
   String toString() {
      StringBuffer buffer = new StringBuffer();

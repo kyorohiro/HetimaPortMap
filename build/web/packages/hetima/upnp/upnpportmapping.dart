@@ -14,8 +14,8 @@ class UpnpPortMappingSample {
 
       searcher.onReceive().listen((UPnpDeviceInfo deviceInfo) {
         UPnpPPPDevice pppDevice = new UPnpPPPDevice(deviceInfo);
-        pppDevice.requestAddPortMapping(remotePort, protocol, localPort, localIp, UPnpPPPDevice.VALUE_ENABLE, label, durationMinute).then((int v) {
-            if (v == 200) {
+        pppDevice.requestAddPortMapping(remotePort, protocol, localPort, localIp, UPnpPPPDevice.VALUE_ENABLE, label, durationMinute).then((UPnpAddPortMappingResponse v) {
+            if (v.resultCode == 200) {
               portMappedDevice.add(pppDevice);
             }
             new async.Future.delayed(new Duration(seconds: 3)).then((t){
@@ -49,8 +49,8 @@ class UpnpPortMappingSample {
 
       searcher.onReceive().listen((UPnpDeviceInfo deviceInfo) {
         UPnpPPPDevice pppDevice = new UPnpPPPDevice(deviceInfo);
-        pppDevice.requestDeletePortMapping(remotePort, protocol).then((int v) {
-            if (v == 200) {
+        pppDevice.requestDeletePortMapping(remotePort, protocol).then((UPnpDeletePortMappingResponse v) {
+            if (v.resultCode == 200) {
               portMappedDevice.add(pppDevice);
             }
             new async.Future.delayed(new Duration(seconds: 3)).then((t){

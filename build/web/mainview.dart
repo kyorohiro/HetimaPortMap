@@ -38,6 +38,8 @@ class MainView {
   async.Stream<AppPortMapInfo> get onClieckDelPortMapButton => _controllerDelPortMapButton.stream;
 
   ui.Html _globalIpBox = new ui.Html("");
+  ui.Html _routerAddress = new ui.Html("");
+
   List<AppPortMapInfo> portMapList = [];
   List<AppNetworkInterface> networkInterfaceList = [];
 
@@ -48,14 +50,20 @@ class MainView {
   void addFoundRouterList(String itemName) {
     _foundRouter.addItem(itemName);
   }
+
   void setGlobalIp(String ip) {
     _globalIpBox.text = ip;
+  }
+
+  void setRouterAddress(String address) {
+    _routerAddress.text = address;
   }
 
   void clearPortMappInfo() {
     portMapList.clear();
     updateRouterList();
   }
+
   void addPortMappInfo(AppPortMapInfo info) {
     portMapList.add(info);
     updateRouterList();
@@ -279,6 +287,10 @@ class MainView {
 
       layout.setWidget(4, 1, grid);
     }
+
+    layout.setHtml(5, 0, "Router Address:");
+    _routerAddress.addStyleName("hetima-grid");
+    layout.setWidget(6, 1, _routerAddress);
 
     _infoForSubPanel.add(layout);
   }

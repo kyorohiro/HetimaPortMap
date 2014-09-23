@@ -55,8 +55,8 @@ class UPnpPPPDevice {
   /**
    * return resultCode. if success then. return 200. ;
    */
-  async.Future<int> requestAddPortMapping(int newExternalPort, String newProtocol, int newInternalPort, String newInternalClient, int newEnabled, String newPortMappingDescription, int newLeaseDuration, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
-    async.Completer<int> completer = new async.Completer();
+  async.Future<UPnpAddPortMappingResponse> requestAddPortMapping(int newExternalPort, String newProtocol, int newInternalPort, String newInternalClient, int newEnabled, String newPortMappingDescription, int newLeaseDuration, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
+    async.Completer<UPnpAddPortMappingResponse> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
       return completer.future;
@@ -69,9 +69,9 @@ class UPnpPPPDevice {
 
     request(serviceInfo, headerValue, requestBody, mode).then((UPnpPPPDeviceRequestResponse response) {
       if (response.resultCode == 200) {
-        completer.complete(response.resultCode);
+        completer.complete(new UPnpAddPortMappingResponse(response.resultCode));
       } else {
-        completer.complete(response.resultCode * -1);
+        completer.complete(new UPnpAddPortMappingResponse(response.resultCode * -1));
       }
     }).catchError((e) {
       completer.completeError(e);
@@ -79,8 +79,8 @@ class UPnpPPPDevice {
     return completer.future;
   }
 
-  async.Future<int> requestDeletePortMapping(int newExternalPort, String newProtocol, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
-    async.Completer<int> completer = new async.Completer();
+  async.Future<UPnpDeletePortMappingResponse> requestDeletePortMapping(int newExternalPort, String newProtocol, [int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
+    async.Completer<UPnpDeletePortMappingResponse> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
       return completer.future;
@@ -92,9 +92,9 @@ class UPnpPPPDevice {
     String headerValue = """\"urn:schemas-upnp-org:service:${_serviceName}:${_version}#DeletePortMapping\"""";
     request(serviceInfo, headerValue, requestBody, mode).then((UPnpPPPDeviceRequestResponse response) {
       if (response.resultCode == 200) {
-        completer.complete(response.resultCode);
+        completer.complete(new UPnpDeletePortMappingResponse(response.resultCode));
       } else {
-        completer.complete(response.resultCode * -1);
+        completer.complete(new UPnpDeletePortMappingResponse(response.resultCode * -1));
       }
     }).catchError((e) {
       completer.completeError(e);
@@ -103,8 +103,8 @@ class UPnpPPPDevice {
   }
 
 
-  async.Future<String> requestGetExternalIPAddress([int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
-    async.Completer<String> completer = new async.Completer();
+  async.Future<UPnpGetExternalIPAddressResponse> requestGetExternalIPAddress([int mode = MODE_POST, UPnpDeviceServiceInfo serviceInfo = null]) {
+    async.Completer<UPnpGetExternalIPAddressResponse> completer = new async.Completer();
     if (getPPPService().length == 0) {
       completer.completeError({});
       return completer.future;
@@ -119,9 +119,11 @@ class UPnpPPPDevice {
       xml.XmlDocument document = xml.parse(response.body);
       Iterable<xml.XmlElement> elements = document.findAllElements("NewExternalIPAddress");
       if (elements.length > 0) {
-        completer.complete(elements.first.text);
+        UPnpGetExternalIPAddressResponse r = new UPnpGetExternalIPAddressResponse(response.resultCode, elements.first.text);
+        completer.complete(r);
       } else {
-        completer.complete("");
+        UPnpGetExternalIPAddressResponse r = new UPnpGetExternalIPAddressResponse(-1 * response.resultCode, "");
+        completer.complete(r);
       }
     }).catchError((e) {
       completer.completeError(e);
@@ -162,15 +164,15 @@ class UPnpPPPDevice {
       port = urlBase.port;
     }
 
-    if(info.controlURL != null && info.controlURL.length != 0) {
+    if (info.controlURL != null && info.controlURL.length != 0) {
       path = info.controlURL;
     }
     client.connect(host, port).then((int v) {
-      if(mode == MODE_POST) {
-      return client.post(path, convert.UTF8.encode(body), {
-        KEY_SOAPACTION: soapAction,
-        "Content-Type": "text/xml"
-      });
+      if (mode == MODE_POST) {
+        return client.post(path, convert.UTF8.encode(body), {
+          KEY_SOAPACTION: soapAction,
+          "Content-Type": "text/xml"
+        });
       } else {
         return client.mpost(path, convert.UTF8.encode(body), {
           "MAN": "\"http://schemas.xmlsoap.org/soap/envelope/\"; ns=01",
@@ -203,6 +205,28 @@ class UPnpPPPDeviceRequestResponse {
   int resultCode;
 }
 
+class UPnpGetExternalIPAddressResponse {
+  int resultCode = 200;
+  String externalIp = "";
+  UPnpGetExternalIPAddressResponse(int _resultCode, String _externalIp) {
+    resultCode = _resultCode;
+    externalIp = _externalIp;
+  }
+}
+
+class UPnpAddPortMappingResponse {
+  int resultCode = 200;
+  UPnpAddPortMappingResponse(int _resultCode) {
+    resultCode = _resultCode;
+  }
+}
+
+class UPnpDeletePortMappingResponse {
+  int resultCode = 200;
+  UPnpDeletePortMappingResponse(int _resultCode) {
+    resultCode = _resultCode;
+  }
+}
 class UPnpGetGenericPortMappingResponse {
   static final String KEY_NewRemoteHost = "NewRemoteHost";
   static final String KEY_NewExternalPort = "NewExternalPort";
@@ -236,5 +260,5 @@ class UPnpGetGenericPortMappingResponse {
   String toString() {
     return _response.body.toString();
   }
-  
+
 }
