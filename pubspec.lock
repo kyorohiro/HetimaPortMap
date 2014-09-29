@@ -28,7 +28,7 @@ packages:
   hetima:
     description:
       ref: null
-      resolved-ref: c36880ceea580a7d3dda8844a8ab2d76f53dc0fc
+      resolved-ref: e31364e52c24b8c3f1c06aeab0a890c486cc0abf
       url: "https://github.com/kyorohiro/dart_hetimalib.git"
     source: git
     version: "0.0.102"

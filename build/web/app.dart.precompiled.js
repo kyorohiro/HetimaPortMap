@@ -4245,6 +4245,11 @@ var $$ = {};
     call$1: [function(v) {
       var t1, info, t2, t3;
       J._clearChildren$0$x(H.interceptedTypeCast($.get$mainView()._foundRouter._element, "$isSelectElement"));
+      $.deviceSearcher.get$deviceInfoList();
+      if ($.deviceSearcher.get$deviceInfoList().length <= 0) {
+        S._showDialog("#### Search Router ####", "Not Found Router");
+        return;
+      }
       for (t1 = $.deviceSearcher.get$deviceInfoList(), t1 = new H.ListIterator(t1, t1.length, 0, null); t1.moveNext$0();) {
         info = t1._current;
         t2 = $.get$mainView();

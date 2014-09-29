@@ -111,7 +111,7 @@ void startUpdateIpInfo() {
       mainView.addNetworkInterface(interface);
     }
   });
-  
+
   mainView.setRouterAddress(info.presentationURL);
 }
 
@@ -130,10 +130,10 @@ void startUpdatePortMappedList() {
   int mode = hetima.UPnpPPPDevice.MODE_POST;
   requestPortMapInfo() {
     pppDevice.requestGetGenericPortMapping(newPortmappingIndex, mode).then((hetima.UPnpGetGenericPortMappingResponse r) {
-      if (r.resultCode == -405 && mode == hetima.UPnpPPPDevice.MODE_POST)  {
+      if (r.resultCode == -405 && mode == hetima.UPnpPPPDevice.MODE_POST) {
         mode = hetima.UPnpPPPDevice.MODE_M_POST;
         requestPortMapInfo();
-        return;        
+        return;
       }
 
       if (r.resultCode != 200) {
@@ -166,6 +166,10 @@ void startSearchPPPDevice() {
 
   deviceSearcher.searchWanPPPDevice().then((int v) {
     mainView.clearFoundRouterList();
+    if (deviceSearcher.deviceInfoList == null || deviceSearcher.deviceInfoList.length <= 0) {
+      _showDialog("#### Search Router ####", "Not Found Router");
+      return;
+    }
     for (hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
       mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
     }
@@ -190,10 +194,10 @@ void startAddPortMapp(appview.AppPortMapInfo i) {
     if (resp.resultCode != 200) {
       result = " $result resultCode = ${resp.resultCode}";
     }
-    _showDialog("#### Port Map ####", result);    
-  };
-  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0)
-  .then((hetima.UPnpAddPortMappingResponse resp) {
+    _showDialog("#### Port Map ####", result);
+  }
+  ;
+  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0).then((hetima.UPnpAddPortMappingResponse resp) {
     if (resp.resultCode == -405) {
       return pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0, hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpAddPortMappingResponse resp) {
         showDialogAPM(resp);
@@ -219,16 +223,15 @@ void startDeletePortMapp(appview.AppPortMapInfo i) {
       result = " $result resultCode = ${resp.resultCode}";
     }
     _showDialog("#### Port Map ####", result);
-  };
-  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol)
-  .then((hetima.UPnpDeletePortMappingResponse resp) {
+  }
+  ;
+  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((hetima.UPnpDeletePortMappingResponse resp) {
     if (resp.resultCode == -405) {
-      return pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol, hetima.UPnpPPPDevice.MODE_M_POST)
-      .then((hetima.UPnpDeletePortMappingResponse resp) {
+      return pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol, hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpDeletePortMappingResponse resp) {
         showDialogDPM(resp);
       });
     } else {
-      showDialogDPM(resp);      
+      showDialogDPM(resp);
     }
   }).catchError((e) {
     _showDialog("#### ERROR ####", "failed delete port mapping");
