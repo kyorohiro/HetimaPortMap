@@ -4187,9 +4187,10 @@ var $$ = {};
       C.JSArray_methods.set$length($.get$mainView().networkInterfaceList, 0);
       for (t1 = J.get$iterator$ax(interfaceList); t1.moveNext$0();) {
         i = t1.get$current();
-        $interface = new Z.AppNetworkInterface("", "");
+        $interface = new Z.AppNetworkInterface("", "", "");
         $interface.ip = i.get$address();
         $interface.length = H.S(i.get$prefixLength());
+        $interface.name = H.S(J.get$name$x(i));
         t2 = $.get$mainView();
         t2.networkInterfaceList.push($interface);
         t2.updateInfoPanel$0();
@@ -18654,7 +18655,7 @@ var $$ = {};
     "^": "Object;"
   },
   HetiNetworkInterface: {
-    "^": "Object;address<,prefixLength<"
+    "^": "Object;address<,prefixLength<,name>"
   },
   HetiSendInfo: {
     "^": "Object;resultCode<"
@@ -19736,9 +19737,10 @@ var $$ = {};
       var t1, t2, i, inter;
       for (t1 = J.get$iterator$ax(nl), t2 = this.interfaceList_1; t1.moveNext$0();) {
         i = t1.get$current();
-        inter = new V.HetiNetworkInterface(null, null);
+        inter = new V.HetiNetworkInterface(null, null, null);
         inter.address = i.get$address();
         inter.prefixLength = i.get$prefixLength();
+        inter.name = J.get$name$x(i);
         t2.push(inter);
       }
       t1 = this.completer_0.future;
@@ -20462,7 +20464,7 @@ var $$ = {};
       t1.add$1(0, grid);
     },
     updateInfoPanel$0: function() {
-      var t1, layout, cellFormatter, t2, grid, index, i, t3, t4, l0, t5, l1;
+      var t1, layout, cellFormatter, t2, grid, index, i, t3, t4, l0, t5, l1, t6, l2;
       t1 = this._infoForSubPanel;
       t1.clear$0(0);
       layout = B.FlexTable$();
@@ -20482,6 +20484,7 @@ var $$ = {};
       B.UiObject_manageElementStyleName(grid.getStyleElement$0(), "cw-FlexTable", true);
       grid.setWidget$3(0, 0, B.Html$("IP", null));
       grid.setWidget$3(0, 1, B.Html$("Length", null));
+      grid.setWidget$3(0, 2, B.Html$("Name", null));
       for (t2 = new H.ListIterator(t2, t2.length, 0, null), index = 0; t2.moveNext$0();) {
         i = t2._current;
         t3 = H.S(i.get$ip());
@@ -20502,10 +20505,29 @@ var $$ = {};
         l0.directionalTextHelper.setTextOrHtml$2(t3, true);
         l0.updateHorizontalAlignment$0();
         B.UiObject_manageElementStyleName(l0.getStyleElement$0(), "hetima-grid", true);
-        t3 = H.S(J.get$length$asx(i));
-        t4 = document.createElement("div", null);
+        t3 = J.getInterceptor$asx(i);
+        t4 = H.S(t3.get$length(i));
+        t5 = document.createElement("div", null);
         l1 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
-        l1._element = t4;
+        l1._element = t5;
+        t6 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
+        t6.element = t5;
+        t6.isElementInline = false;
+        t6.isSpanWrapped = false;
+        t5 = A.BidiUtils_getDirectionOnElement(t5);
+        t6.initialElementDir = t5;
+        t6.textDir = t5;
+        t6.isDirectionExplicitlySet = true;
+        l1.directionalTextHelper = t6;
+        l1.getStyleElement$0().className = "dwt-Label";
+        l1.getStyleElement$0().className = "dwt-HTML";
+        l1.directionalTextHelper.setTextOrHtml$2(t4, true);
+        l1.updateHorizontalAlignment$0();
+        B.UiObject_manageElementStyleName(l1.getStyleElement$0(), "hetima-grid", true);
+        t3 = H.S(t3.get$name(i));
+        t4 = document.createElement("div", null);
+        l2 = new B.Html(null, null, null, null, 0, null, false, null, null, null);
+        l2._element = t4;
         t5 = new A.DirectionalTextHelper(null, false, false, null, null, false, null);
         t5.element = t4;
         t5.isElementInline = false;
@@ -20514,15 +20536,16 @@ var $$ = {};
         t5.initialElementDir = t4;
         t5.textDir = t4;
         t5.isDirectionExplicitlySet = true;
-        l1.directionalTextHelper = t5;
-        l1.getStyleElement$0().className = "dwt-Label";
-        l1.getStyleElement$0().className = "dwt-HTML";
-        l1.directionalTextHelper.setTextOrHtml$2(t3, true);
-        l1.updateHorizontalAlignment$0();
-        B.UiObject_manageElementStyleName(l1.getStyleElement$0(), "hetima-grid", true);
+        l2.directionalTextHelper = t5;
+        l2.getStyleElement$0().className = "dwt-Label";
+        l2.getStyleElement$0().className = "dwt-HTML";
+        l2.directionalTextHelper.setTextOrHtml$2(t3, true);
+        l2.updateHorizontalAlignment$0();
+        B.UiObject_manageElementStyleName(l2.getStyleElement$0(), "hetima-grid", true);
         ++index;
         grid.setWidget$3(index, 0, l0);
         grid.setWidget$3(index, 1, l1);
+        grid.setWidget$3(index, 2, l2);
       }
       layout.setWidget$3(4, 1, grid);
       layout.setHtml$3(5, 0, "Router Address:");
@@ -20644,7 +20667,7 @@ var $$ = {};
     "^": "Object;protocol>,publicPort<,localIp<,localPort<,description<"
   },
   AppNetworkInterface: {
-    "^": "Object;ip<,length>"
+    "^": "Object;ip<,length>,name>"
   },
   createDialogBox_closure: {
     "^": "Closure:148;dialogBox_0",
@@ -34261,9 +34284,10 @@ function dart_precompiled($collectedClasses) {
   if ($desc instanceof Array)
     $desc = $desc[1];
   HetiUdpSocket.prototype = $desc;
-  function HetiNetworkInterface(address, prefixLength) {
+  function HetiNetworkInterface(address, prefixLength, name) {
     this.address = address;
     this.prefixLength = prefixLength;
+    this.name = name;
   }
   HetiNetworkInterface.builtin$cls = "HetiNetworkInterface";
   if (!"name" in HetiNetworkInterface)
@@ -34277,6 +34301,9 @@ function dart_precompiled($collectedClasses) {
   };
   HetiNetworkInterface.prototype.get$prefixLength = function() {
     return this.prefixLength;
+  };
+  HetiNetworkInterface.prototype.get$name = function(receiver) {
+    return this.name;
   };
   function HetiSendInfo(resultCode) {
     this.resultCode = resultCode;
@@ -35325,9 +35352,10 @@ function dart_precompiled($collectedClasses) {
   AppPortMapInfo.prototype.get$description = function() {
     return this.description;
   };
-  function AppNetworkInterface(ip, length) {
+  function AppNetworkInterface(ip, length, name) {
     this.ip = ip;
     this.length = length;
+    this.name = name;
   }
   AppNetworkInterface.builtin$cls = "AppNetworkInterface";
   if (!"name" in AppNetworkInterface)
@@ -35341,6 +35369,9 @@ function dart_precompiled($collectedClasses) {
   };
   AppNetworkInterface.prototype.get$length = function(receiver) {
     return this.length;
+  };
+  AppNetworkInterface.prototype.get$name = function(receiver) {
+    return this.name;
   };
   function createDialogBox_closure(dialogBox_0) {
     this.dialogBox_0 = dialogBox_0;

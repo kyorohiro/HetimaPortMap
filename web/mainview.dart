@@ -271,6 +271,7 @@ class MainView {
       grid.addStyleName("cw-FlexTable");
       grid.setWidget(0, 0, new ui.Html("IP"));
       grid.setWidget(0, 1, new ui.Html("Length"));
+      grid.setWidget(0, 2, new ui.Html("Name"));
       {
         int index = 0;
         for (AppNetworkInterface i in networkInterfaceList) {
@@ -278,8 +279,11 @@ class MainView {
           l0.addStyleName("hetima-grid");
           ui.Html l1 = new ui.Html("${i.length}");
           l1.addStyleName("hetima-grid");
+          ui.Html l2 = new ui.Html("${i.name}");
+          l2.addStyleName("hetima-grid");
           grid.setWidget(index + 1, 0, l0);
           grid.setWidget(index + 1, 1, l1);
+          grid.setWidget(index + 1, 2, l2);
           index++;
         }
 //        grid.setWidget(1, 1, widget);
@@ -307,6 +311,7 @@ class AppPortMapInfo {
 class AppNetworkInterface {
   String ip = "";
   String length = "";
+  String name = "";
 }
 
 /**

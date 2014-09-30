@@ -108,6 +108,7 @@ void startUpdateIpInfo() {
       appview.AppNetworkInterface interface = new appview.AppNetworkInterface();
       interface.ip = i.address;
       interface.length = "${i.prefixLength}";
+      interface.name = "${i.name}";
       mainView.addNetworkInterface(interface);
     }
   });
