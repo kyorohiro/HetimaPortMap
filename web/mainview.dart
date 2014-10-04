@@ -237,8 +237,10 @@ class MainView {
       l3.addStyleName("hetima-grid");
       l4.addStyleName("hetima-grid");
 
+      int crow = row;
       ui.Button b = new ui.Button("x", new event.ClickHandlerAdapter((event.ClickEvent evt) {
         _controllerDelPortMapButton.add(i);
+        grid.setWidget(crow, 0, new ui.Html("-"));
       }));
       grid.setWidget(row, 5, l0);
       grid.setWidget(row, 0, b);

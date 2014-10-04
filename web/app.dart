@@ -37,6 +37,7 @@ void setupUI() {
     } else {
     }
   });
+
   mainView.onSelectRouter.listen((String v) {
     print("### select router ${v}");
   });
@@ -159,13 +160,15 @@ void startUpdatePortMappedList() {
   requestPortMapInfo();
 }
 
+bool isSearching = false;
 void startSearchPPPDevice() {
-  if (deviceSearcher == null) {
+  if (deviceSearcher == null || isSearching) {
     return;
   }
   mainView.clearFoundRouterList();
 
   deviceSearcher.searchWanPPPDevice().then((int v) {
+    isSearching  = false;
     mainView.clearFoundRouterList();
     if (deviceSearcher.deviceInfoList == null || deviceSearcher.deviceInfoList.length <= 0) {
       _showDialog("#### Search Router ####", "Not Found Router");
@@ -174,6 +177,8 @@ void startSearchPPPDevice() {
     for (hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
       mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
     }
+  }).catchError((e){
+    isSearching  = false;
   });
 }
 
