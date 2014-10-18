@@ -224,11 +224,11 @@ void startDeletePortMapp(appview.AppPortMapInfo i) {
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
 
   showDialogDPM(hetima.UPnpDeletePortMappingResponse resp) {
-    String result = "OK";
     if (resp.resultCode != 200) {
-      result = " $result resultCode = ${resp.resultCode}";
+      _showDialog("#### Delete Port Map NG ####", "resultCode = ${resp.resultCode}");
+    } else {
+      //_showDialog("#### Delete Port Map OK ####", "OK");      
     }
-    _showDialog("#### Port Map ####", result);
   }
   ;
   pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((hetima.UPnpDeletePortMappingResponse resp) {

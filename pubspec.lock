@@ -4,7 +4,7 @@ packages:
   barback:
     description: barback
     source: hosted
-    version: "0.15.0+1"
+    version: "0.15.2+2"
   browser:
     description: browser
     source: hosted
@@ -28,7 +28,7 @@ packages:
   hetima:
     description:
       ref: null
-      resolved-ref: "5761eeaa6109c957f3079e293cc03c15fa331690"
+      resolved-ref: a7606ca8702d482f9e6b7e1e0930dfcb46f49933
       url: "https://github.com/kyorohiro/dart_hetimalib.git"
     source: git
     version: "0.0.103"
@@ -55,7 +55,7 @@ packages:
   stack_trace:
     description: stack_trace
     source: hosted
-    version: "1.0.2"
+    version: "1.1.1"
   unittest:
     description: unittest
     source: hosted

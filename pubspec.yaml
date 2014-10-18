@@ -9,4 +9,5 @@ dependencies:
     git: https://github.com/kyorohiro/dart_hetimalib.git
 transformers:
 - chrome
-csp: false;
+- $dart2js:
+    csp: true
