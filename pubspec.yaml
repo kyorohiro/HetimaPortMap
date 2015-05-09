@@ -5,8 +5,10 @@ description: port map chrome app
 dependencies:
   chrome: any
   dart_web_toolkit: any
-  hetima:
-    git: https://github.com/kyorohiro/dart_hetimalib.git
+  hetimacore:
+    git: https://github.com/kyorohiro/dart_hetimacore.git
+  hetimanet:
+    git: https://github.com/kyorohiro/dart_hetimanet.git
 transformers:
 - chrome
 - $dart2js:
