@@ -17,25 +17,31 @@ packages:
     description: collection
     source: hosted
     version: "1.0.0"
-  crypto:
-    description: crypto
-    source: hosted
-    version: "0.9.0"
   dart_web_toolkit:
     description: dart_web_toolkit
     source: hosted
     version: "0.4.4"
-  hetima:
+  hetimacore:
     description:
       ref: null
-      resolved-ref: a7606ca8702d482f9e6b7e1e0930dfcb46f49933
-      url: "https://github.com/kyorohiro/dart_hetimalib.git"
+      resolved-ref: "966b10c976a8a48fa61f2026422b6a7bd88c4e2c"
+      url: "https://github.com/kyorohiro/dart_hetimacore"
     source: git
-    version: "0.0.103"
-  matcher:
-    description: matcher
-    source: hosted
-    version: "0.11.1"
+    version: "0.0.1"
+  hetimanet:
+    description:
+      ref: null
+      resolved-ref: ce6b59ac9f0bb1013dafc4af4796db1a5a4d43af
+      url: "https://github.com/kyorohiro/dart_hetimanet"
+    source: git
+    version: "0.0.1"
+  hetimaregex:
+    description:
+      ref: null
+      resolved-ref: "047a5b2aca2c6c28b89f43d6d310dfddfd4a37b1"
+      url: "https://github.com/kyorohiro/dart_hetimaregex"
+    source: git
+    version: "0.0.1"
   path:
     description: path
     source: hosted
@@ -56,10 +62,6 @@ packages:
     description: stack_trace
     source: hosted
     version: "1.1.1"
-  unittest:
-    description: unittest
-    source: hosted
-    version: "0.11.0+5"
   xml:
     description: xml
     source: hosted

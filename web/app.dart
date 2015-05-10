@@ -8,10 +8,10 @@ import 'package:dart_web_toolkit/i18n.dart' as i18n;
 import 'package:dart_web_toolkit/text.dart' as text;
 import 'package:dart_web_toolkit/scheduler.dart' as scheduler;
 import 'package:dart_web_toolkit/validation.dart' as validation;
-import 'package:hetima/hetima.dart' as hetima;
-import 'package:hetima/hetima_cl.dart' as hetimacl;
+import 'package:hetimacore/hetimacore.dart' as hetima;
+import 'package:hetimanet/hetimanet.dart' as hetima;
+import 'package:hetimanet/hetimanet_chrome.dart' as hetima;
 import './mainview.dart' as appview;
-
 
 hetima.UpnpDeviceSearcher deviceSearcher = null;
 appview.MainView mainView = new appview.MainView();
@@ -54,7 +54,7 @@ void setupUI() {
 }
 
 void setupUpnp() {
-  hetima.UpnpDeviceSearcher.createInstance(new hetimacl.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
+  hetima.UpnpDeviceSearcher.createInstance(new hetima.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
     deviceSearcher = searcher;
     searcher.onReceive().listen((hetima.UPnpDeviceInfo info) {
       print("log:" + info.toString());
@@ -103,7 +103,7 @@ void startUpdateIpInfo() {
     mainView.setGlobalIp("failed");
   });
 
-  (new hetimacl.HetiSocketBuilderChrome()).getNetworkInterfaces().then((List<hetima.HetiNetworkInterface> interfaceList) {
+  (new hetima.HetiSocketBuilderChrome()).getNetworkInterfaces().then((List<hetima.HetiNetworkInterface> interfaceList) {
     mainView.clearNetworkInterface();
     for (hetima.HetiNetworkInterface i in interfaceList) {
       appview.AppNetworkInterface interface = new appview.AppNetworkInterface();
