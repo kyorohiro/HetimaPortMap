@@ -11,8 +11,69 @@ import 'package:dart_web_toolkit/validation.dart' as validation;
 import 'package:hetimacore/hetimacore.dart' as hetima;
 import 'package:hetimanet/hetimanet.dart' as hetima;
 import 'package:hetimanet/hetimanet_chrome.dart' as hetima;
-import './mainview.dart' as appview;
 
+import 'package:hetimanet/src/net/hetisocket.dart' as hs;
+import 'package:hetimanet/src/net/hetisocket_chrome.dart' as hetimanet_ch;
+import 'package:hetimanet/src/http/hetihttp.dart' as hhttp;
+import './mainview.dart' as appview;
+import 'dart:convert' as convert;
+
+/*
+void main() {
+  print("###start");
+  hetimanet_ch.HetiSocketBuilderChrome bm = new hetimanet_ch.HetiSocketBuilderChrome();
+  hhttp.HetiHttpClient c = new hhttp.HetiHttpClient(new hetimanet_ch.HetiSocketBuilderChrome());
+  c.connect("www.google.com", 80).then((int v){
+    print("###message${v}");
+    _showDialog("title","message${v}");
+
+    Map<String, String> t = {};
+    t["Connection"] = "keep-alive";
+    c.get("/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=android", t).then((hhttp.HetiHttpClientResponse res) {
+      for (hhttp.HetiHttpResponseHeaderField f in res.message.headerField) {
+        print(f.fieldName + ":" + f.fieldValue);
+      }
+      res.body.getByteFuture(0, res.message.index).then((List<int> v) {
+        print("\r\n####header##\r\n" + convert.UTF8.decode(v) + "\r\n####\r\n");
+        int len = res.getContentLength();
+        print("--##AA00-");
+        if (len != -1) {
+          print("--##AA01-");
+          res.body.getByteFuture(0, len).then((List<int> v) {
+            print("--##AA01 AA-");
+          });
+        } else {
+          print("--##AA02-");
+          res.body.onFin().then((e) {
+            res.body.getLength().then((int size) {
+              c.close();
+              print("--##AA02 BB-" + size.toString());
+              res.body.getByteFuture(0, size).then((List<int> v) {
+                print("--##AA03 BB-" + convert.UTF8.decode(v));
+              });
+            });
+          });
+        }
+      });
+    });
+  }).catchError((e){
+    print("###err");
+    //_showDialog("title","err");
+  });
+//  hetimanet_ch.
+//  hetimanet.HetiSocketBuilderChrome s;
+//  hetima.HetiUdpSocket s;
+      
+//  setupUI();
+//  setupUpnp();
+}
+
+void _showDialog(String title, String message) {
+  ui.DialogBox dialogBox = appview.createDialogBox(title, new ui.Html(message));
+  dialogBox.show();
+  dialogBox.center();
+}
+*/
 hetima.UpnpDeviceSearcher deviceSearcher = null;
 appview.MainView mainView = new appview.MainView();
 
@@ -22,6 +83,7 @@ void main() {
 }
 
 void setupUI() {
+  print("### st setupUI");
   mainView.intialize();
   mainView.onClickSearchButton.listen((int v) {
     print("### search router");
@@ -54,12 +116,16 @@ void setupUI() {
 }
 
 void setupUpnp() {
+  print("### st setupUpnp");
   hetima.UpnpDeviceSearcher.createInstance(new hetima.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
+    print("### ok setupUpnp ${searcher}");
     deviceSearcher = searcher;
     searcher.onReceive().listen((hetima.UPnpDeviceInfo info) {
-      print("log:" + info.toString());
+      print("###log:" + info.toString());
       mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
     });
+  }).catchError((e){
+    print("### er setupUpnp ${e}");
   });
 }
 
@@ -163,6 +229,8 @@ void startUpdatePortMappedList() {
 bool isSearching = false;
 void startSearchPPPDevice() {
   if (deviceSearcher == null || isSearching) {
+    print("### search router:null");
+    _showDialog("#### Search Router ####", "Not Found Router");
     return;
   }
   mainView.clearFoundRouterList();
@@ -243,3 +311,4 @@ void startDeletePortMapp(appview.AppPortMapInfo i) {
     _showDialog("#### ERROR ####", "failed delete port mapping");
   });
 }
+
