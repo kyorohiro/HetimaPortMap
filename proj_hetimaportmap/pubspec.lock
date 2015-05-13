@@ -38,7 +38,7 @@ packages:
   hetimaregex:
     description:
       ref: null
-      resolved-ref: "047a5b2aca2c6c28b89f43d6d310dfddfd4a37b1"
+      resolved-ref: "37608feb7512f73a4fe352587d083cefb842b0fb"
       url: "https://github.com/kyorohiro/dart_hetimaregex"
     source: git
     version: "0.0.1"
