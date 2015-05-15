@@ -1,10 +1,11 @@
-
+library HetimaPortMap.impl;
 import 'package:dart_web_toolkit/event.dart' as event;
 import 'package:dart_web_toolkit/ui.dart' as ui;
 import 'package:dart_web_toolkit/i18n.dart' as i18n;
 import 'dart:async' as async;
+import 'mainview.dart';
 
-class MainView {
+class MainViewImpl extends MainView {
 
   static const int MAIN = 0;
   static const int LIST = 1;
@@ -293,52 +294,38 @@ class MainView {
 
     _infoForSubPanel.add(layout);
   }
-}
 
-class AppPortMapInfo {
-  String protocol = "";
-  String publicPort = "";
-  String localIp = "";
-  String localPort = "";
-  String description = "";
-}
+  /**
+   * ui.DialogBox dialogBox = createDialogBox(String title, ui.Widget body)
+   * dialogBox.setGlassEnabled(false);
+   * dialogBox.show();
+   * dialogBox.center();
+   */
+  ui.DialogBox createDialogBox(String title, ui.Widget body) {
+    ui.DialogBox dialogBox = new ui.DialogBox();
+    dialogBox.text = title;
 
-class AppNetworkInterface {
-  String ip = "";
-  String length = "";
-  String name = "";
-}
+    // Create a table to layout the content
+    ui.VerticalPanel dialogContents = new ui.VerticalPanel();
+    dialogContents.spacing = 4;
+    dialogBox.setWidget(dialogContents);
 
-/**
- * ui.DialogBox dialogBox = createDialogBox(String title, ui.Widget body)
- * dialogBox.setGlassEnabled(false);
- * dialogBox.show();
- * dialogBox.center();
- */
-ui.DialogBox createDialogBox(String title, ui.Widget body) {
-  ui.DialogBox dialogBox = new ui.DialogBox();
-  dialogBox.text = title;
+    // Add some text to the top of the dialog
+    dialogContents.add(body);
+    dialogContents.setWidgetCellHorizontalAlignment(body, i18n.HasHorizontalAlignment.ALIGN_CENTER);
 
-  // Create a table to layout the content
-  ui.VerticalPanel dialogContents = new ui.VerticalPanel();
-  dialogContents.spacing = 4;
-  dialogBox.setWidget(dialogContents);
+    // Add a close button at the bottom of the dialog
+    ui.Button closeButton = new ui.Button("Close", new event.ClickHandlerAdapter((event.ClickEvent evt) {
+      dialogBox.hide();
+    }));
+    dialogContents.add(closeButton);
+    if (i18n.LocaleInfo.getCurrentLocale().isRTL()) {
+      dialogContents.setWidgetCellHorizontalAlignment(closeButton, i18n.HasHorizontalAlignment.ALIGN_LEFT);
+    } else {
+      dialogContents.setWidgetCellHorizontalAlignment(closeButton, i18n.HasHorizontalAlignment.ALIGN_RIGHT);
+    }
 
-  // Add some text to the top of the dialog
-  dialogContents.add(body);
-  dialogContents.setWidgetCellHorizontalAlignment(body, i18n.HasHorizontalAlignment.ALIGN_CENTER);
-
-  // Add a close button at the bottom of the dialog
-  ui.Button closeButton = new ui.Button("Close", new event.ClickHandlerAdapter((event.ClickEvent evt) {
-    dialogBox.hide();
-  }));
-  dialogContents.add(closeButton);
-  if (i18n.LocaleInfo.getCurrentLocale().isRTL()) {
-    dialogContents.setWidgetCellHorizontalAlignment(closeButton, i18n.HasHorizontalAlignment.ALIGN_LEFT);
-  } else {
-    dialogContents.setWidgetCellHorizontalAlignment(closeButton, i18n.HasHorizontalAlignment.ALIGN_RIGHT);
+    // Return the dialog box
+    return dialogBox;
   }
-
-  // Return the dialog box
-  return dialogBox;
 }

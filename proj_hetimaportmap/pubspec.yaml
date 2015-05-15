@@ -4,7 +4,8 @@ author: kyorohiro
 description: port map chrome app
 dependencies:
   chrome: any
-  dart_web_toolkit: any
+  dart_web_toolkit:
+    path: /Users/kiyohiro/dart/git/ot/dart_web_toolkit
   hetimacore:
     git: https://github.com/kyorohiro/dart_hetimacore
   hetimanet:
