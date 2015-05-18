@@ -18,22 +18,20 @@ packages:
     source: hosted
     version: "1.1.1"
   dart_web_toolkit:
-    description:
-      path: "/Users/kiyohiro/dart/git/ot/dart_web_toolkit"
-      relative: false
-    source: path
-    version: "0.4.6"
+    description: dart_web_toolkit
+    source: hosted
+    version: "0.4.5"
   hetimacore:
     description:
       ref: null
-      resolved-ref: "966b10c976a8a48fa61f2026422b6a7bd88c4e2c"
+      resolved-ref: "19cdf7af53960387cda960f07fcd90e72e1b182c"
       url: "https://github.com/kyorohiro/dart_hetimacore"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   hetimanet:
     description:
       ref: null
-      resolved-ref: fbda6263ee502d45629639c97529fb9ee56d2a5a
+      resolved-ref: b7ee7f50464aacc106fa11e951fc122f001e4034
       url: "https://github.com/kyorohiro/dart_hetimanet"
     source: git
     version: "0.0.1"
@@ -51,7 +49,7 @@ packages:
   petitparser:
     description: petitparser
     source: hosted
-    version: "1.4.1"
+    version: "1.4.3"
   pool:
     description: pool
     source: hosted
@@ -67,4 +65,4 @@ packages:
   xml:
     description: xml
     source: hosted
-    version: "2.3.1"
+    version: "2.3.2"

@@ -4,7 +4,7 @@ import 'package:dart_web_toolkit/ui.dart' as ui;
 import 'package:dart_web_toolkit/i18n.dart' as i18n;
 import 'dart:async' as async;
 
-class MainView {
+abstract class MainView {
 
   static const int MAIN = 0;
   static const int LIST = 1;

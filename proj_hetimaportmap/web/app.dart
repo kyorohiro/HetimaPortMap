@@ -5,6 +5,7 @@ import 'package:hetimacore/hetimacore.dart' as hetima;
 import 'package:hetimanet/hetimanet.dart' as hetima;
 import 'package:hetimanet/hetimanet_chrome.dart' as hetima;
 import 'package:HetimaPortMap/mainview.dart' as appview;
+//import 'package:HetimaPortMap/mainviewimpl.dart' deferred as impl;
 import 'package:HetimaPortMap/mainviewimpl.dart' as impl;
 
 hetima.UpnpDeviceSearcher deviceSearcher = null;
@@ -12,14 +13,17 @@ var mainView = null;
 
 void main() {
   print("### main()");
-
-  mainView = new impl.MainViewImpl();
-  html.Element loader = html.document.getElementById("loader");
-  if (loader != null) {
-    loader.remove();
+//  impl.loadLibrary().then((_) {
+  {
+    mainView = new impl.MainViewImpl();
+    html.Element loader = html.document.getElementById("loader");
+    if (loader != null) {
+      loader.remove();
+    }
+    setupUI();
+    setupUpnp();    
   }
-  setupUI();
-  setupUpnp();
+//  });
 }
 
 void setupUI() {
@@ -131,7 +135,7 @@ void startUpdatePortMappedList() {
   if (info == null) {
     return;
   }
-  List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
+ // List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
   int newPortmappingIndex = 0;
   hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
   int mode = hetima.UPnpPPPDevice.MODE_POST;
