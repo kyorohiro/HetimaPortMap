@@ -100,7 +100,7 @@ void startUpdateIpInfo() {
 
   hetima.UpnpPPPDevice pppDevice = new hetima.UpnpPPPDevice(info);
   pppDevice.requestGetExternalIPAddress().then((hetima.UpnpGetExternalIPAddressResponse ip) {
-    if (ip.resultCode == -405) {
+    if (ip.resultCode == 405) {
       //retry at mpost request
       return pppDevice.requestGetExternalIPAddress(hetima.UpnpPPPDevice.MODE_M_POST).then((hetima.UpnpGetExternalIPAddressResponse ip) {
         mainView.setGlobalIp(ip.externalIp);
@@ -215,7 +215,7 @@ void startAddPortMapp(var i) {
   }
   ;
   pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0).then((hetima.UpnpAddPortMappingResponse resp) {
-    if (resp.resultCode == -405) {
+    if (resp.resultCode == 405) {
       return pppDevice
           .requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0, hetima.UpnpPPPDevice.MODE_M_POST)
           .then((hetima.UpnpAddPortMappingResponse resp) {
@@ -245,7 +245,7 @@ void startDeletePortMapp(var i) {
   }
   ;
   pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((hetima.UpnpDeletePortMappingResponse resp) {
-    if (resp.resultCode == -405) {
+    if (resp.resultCode == 405) {
       return pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol, hetima.UpnpPPPDevice.MODE_M_POST).then((hetima.UpnpDeletePortMappingResponse resp) {
         showDialogDPM(resp);
       });
