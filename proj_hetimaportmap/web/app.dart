@@ -63,25 +63,25 @@ void setupUpnp() {
   hetima.UpnpDeviceSearcher.createInstance(new hetima.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
     print("### ok setupUpnp ${searcher}");
     deviceSearcher = searcher;
-    searcher.onReceive().listen((hetima.UPnpDeviceInfo info) {
+    searcher.onReceive().listen((hetima.UpnpDeviceInfo info) {
       print("###log:" + info.toString());
-      mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
+      mainView.addFoundRouterList(info.getValue(hetima.UpnpDeviceInfo.KEY_USN, "*"));
     });
   }).catchError((e) {
     print("### er setupUpnp ${e}");
   });
 }
 
-hetima.UPnpDeviceInfo getCurrentRouter() {
+hetima.UpnpDeviceInfo getCurrentRouter() {
   if (deviceSearcher.deviceInfoList.length <= 0) {
     return null;
   }
   String routerName = mainView.currentSelectRouter();
-  for (hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
+  for (hetima.UpnpDeviceInfo info in deviceSearcher.deviceInfoList) {
     if (info == null) {
       continue;
     }
-    if (routerName == info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*")) {
+    if (routerName == info.getValue(hetima.UpnpDeviceInfo.KEY_USN, "*")) {
       return info;
     }
   }
@@ -93,16 +93,16 @@ void startUpdateIpInfo() {
     return;
   }
 
-  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  hetima.UpnpDeviceInfo info = getCurrentRouter();
   if (info == null) {
     return;
   }
 
-  hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
-  pppDevice.requestGetExternalIPAddress().then((hetima.UPnpGetExternalIPAddressResponse ip) {
+  hetima.UpnpPPPDevice pppDevice = new hetima.UpnpPPPDevice(info);
+  pppDevice.requestGetExternalIPAddress().then((hetima.UpnpGetExternalIPAddressResponse ip) {
     if (ip.resultCode == -405) {
       //retry at mpost request
-      return pppDevice.requestGetExternalIPAddress(hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpGetExternalIPAddressResponse ip) {
+      return pppDevice.requestGetExternalIPAddress(hetima.UpnpPPPDevice.MODE_M_POST).then((hetima.UpnpGetExternalIPAddressResponse ip) {
         mainView.setGlobalIp(ip.externalIp);
       });
     } else {
@@ -131,18 +131,18 @@ void startUpdatePortMappedList() {
   if (deviceSearcher == null) {
     return;
   }
-  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  hetima.UpnpDeviceInfo info = getCurrentRouter();
   if (info == null) {
     return;
   }
  // List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
   int newPortmappingIndex = 0;
-  hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
-  int mode = hetima.UPnpPPPDevice.MODE_POST;
+  hetima.UpnpPPPDevice pppDevice = new hetima.UpnpPPPDevice(info);
+  int mode = hetima.UpnpPPPDevice.MODE_POST;
   requestPortMapInfo() {
-    pppDevice.requestGetGenericPortMapping(newPortmappingIndex, mode).then((hetima.UPnpGetGenericPortMappingResponse r) {
-      if (r.resultCode == -405 && mode == hetima.UPnpPPPDevice.MODE_POST) {
-        mode = hetima.UPnpPPPDevice.MODE_M_POST;
+    pppDevice.requestGetGenericPortMapping(newPortmappingIndex, mode).then((hetima.UpnpGetGenericPortMappingResponse r) {
+      if (r.resultCode == -405 && mode == hetima.UpnpPPPDevice.MODE_POST) {
+        mode = hetima.UpnpPPPDevice.MODE_M_POST;
         requestPortMapInfo();
         return;
       }
@@ -152,11 +152,11 @@ void startUpdatePortMappedList() {
       }
 
       var portMapInfo = new appview.AppPortMapInfo();
-      portMapInfo.publicPort = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewExternalPort, "");
-      portMapInfo.localIp = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewInternalClient, "");
-      portMapInfo.localPort = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewInternalPort, "");
-      portMapInfo.protocol = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewProtocol, "");
-      portMapInfo.description = r.getValue(hetima.UPnpGetGenericPortMappingResponse.KEY_NewPortMappingDescription, "");
+      portMapInfo.publicPort = r.getValue(hetima.UpnpGetGenericPortMappingResponse.KEY_NewExternalPort, "");
+      portMapInfo.localIp = r.getValue(hetima.UpnpGetGenericPortMappingResponse.KEY_NewInternalClient, "");
+      portMapInfo.localPort = r.getValue(hetima.UpnpGetGenericPortMappingResponse.KEY_NewInternalPort, "");
+      portMapInfo.protocol = r.getValue(hetima.UpnpGetGenericPortMappingResponse.KEY_NewProtocol, "");
+      portMapInfo.description = r.getValue(hetima.UpnpGetGenericPortMappingResponse.KEY_NewPortMappingDescription, "");
       if (portMapInfo.localPort.replaceAll(" |\t|\r|\n", "") == "" && portMapInfo.localIp.replaceAll(" |\t|\r|\n", "") == "") {
         return;
       }
@@ -184,10 +184,11 @@ void startSearchPPPDevice() {
       _showDialog("#### Search Router ####", "Not Found Router");
       return;
     }
-    for (hetima.UPnpDeviceInfo info in deviceSearcher.deviceInfoList) {
-      mainView.addFoundRouterList(info.getValue(hetima.UPnpDeviceInfo.KEY_USN, "*"));
+    for (hetima.UpnpDeviceInfo info in deviceSearcher.deviceInfoList) {
+      mainView.addFoundRouterList(info.getValue(hetima.UpnpDeviceInfo.KEY_USN, "*"));
     }
   }).catchError((e) {
+    print("error ${e.toString()}");
     isSearching = false;
   });
 }
@@ -199,13 +200,13 @@ void _showDialog(String title, String message) {
 }
 
 void startAddPortMapp(var i) {
-  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  hetima.UpnpDeviceInfo info = getCurrentRouter();
   if (info == null) {
     return null;
   }
-  hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
+  hetima.UpnpPPPDevice pppDevice = new hetima.UpnpPPPDevice(info);
 
-  showDialogAPM(hetima.UPnpAddPortMappingResponse resp) {
+  showDialogAPM(hetima.UpnpAddPortMappingResponse resp) {
     String result = "OK";
     if (resp.resultCode != 200) {
       result = " $result resultCode = ${resp.resultCode}";
@@ -213,11 +214,11 @@ void startAddPortMapp(var i) {
     _showDialog("#### Port Map ####", result);
   }
   ;
-  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0).then((hetima.UPnpAddPortMappingResponse resp) {
+  pppDevice.requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0).then((hetima.UpnpAddPortMappingResponse resp) {
     if (resp.resultCode == -405) {
       return pppDevice
-          .requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0, hetima.UPnpPPPDevice.MODE_M_POST)
-          .then((hetima.UPnpAddPortMappingResponse resp) {
+          .requestAddPortMapping(int.parse(i.publicPort), i.protocol, int.parse(i.localPort), i.localIp, 1, i.description, 0, hetima.UpnpPPPDevice.MODE_M_POST)
+          .then((hetima.UpnpAddPortMappingResponse resp) {
         showDialogAPM(resp);
       });
     } else {
@@ -229,13 +230,13 @@ void startAddPortMapp(var i) {
 }
 
 void startDeletePortMapp(var i) {
-  hetima.UPnpDeviceInfo info = getCurrentRouter();
+  hetima.UpnpDeviceInfo info = getCurrentRouter();
   if (info == null) {
     return;
   }
-  hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(info);
+  hetima.UpnpPPPDevice pppDevice = new hetima.UpnpPPPDevice(info);
 
-  showDialogDPM(hetima.UPnpDeletePortMappingResponse resp) {
+  showDialogDPM(hetima.UpnpDeletePortMappingResponse resp) {
     if (resp.resultCode != 200) {
       _showDialog("#### Delete Port Map NG ####", "resultCode = ${resp.resultCode}");
     } else {
@@ -243,9 +244,9 @@ void startDeletePortMapp(var i) {
     }
   }
   ;
-  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((hetima.UPnpDeletePortMappingResponse resp) {
+  pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol).then((hetima.UpnpDeletePortMappingResponse resp) {
     if (resp.resultCode == -405) {
-      return pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol, hetima.UPnpPPPDevice.MODE_M_POST).then((hetima.UPnpDeletePortMappingResponse resp) {
+      return pppDevice.requestDeletePortMapping(int.parse(i.publicPort), i.protocol, hetima.UpnpPPPDevice.MODE_M_POST).then((hetima.UpnpDeletePortMappingResponse resp) {
         showDialogDPM(resp);
       });
     } else {

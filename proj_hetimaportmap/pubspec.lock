@@ -24,16 +24,15 @@ packages:
   hetimacore:
     description:
       ref: null
-      resolved-ref: "19cdf7af53960387cda960f07fcd90e72e1b182c"
+      resolved-ref: d0e43c7004eff9d7e1e4ab4839394f18fb1cde42
       url: "https://github.com/kyorohiro/dart_hetimacore"
     source: git
     version: "0.0.2"
   hetimanet:
     description:
-      ref: null
-      resolved-ref: b7ee7f50464aacc106fa11e951fc122f001e4034
-      url: "https://github.com/kyorohiro/dart_hetimanet"
-    source: git
+      path: "/Users/kiyohiro/dart/git/dart_hetimanet"
+      relative: false
+    source: path
     version: "0.0.1"
   hetimaregex:
     description:
@@ -53,7 +52,7 @@ packages:
   pool:
     description: pool
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   source_span:
     description: source_span
     source: hosted
