@@ -1,5 +1,4 @@
 import 'dart:html' as html;
-import 'dart:async' as async;
 import 'package:dart_web_toolkit/ui.dart' as ui;
 import 'package:hetimacore/hetimacore.dart' as hetima;
 import 'package:hetimanet/hetimanet.dart' as hetima;
@@ -13,7 +12,6 @@ var mainView = null;
 
 void main() {
   print("### main()");
-//  impl.loadLibrary().then((_) {
   {
     mainView = new impl.MainViewImpl();
     html.Element loader = html.document.getElementById("loader");
@@ -23,7 +21,6 @@ void main() {
     setupUI();
     setupUpnp();    
   }
-//  });
 }
 
 void setupUI() {
@@ -135,13 +132,12 @@ void startUpdatePortMappedList() {
   if (info == null) {
     return;
   }
- // List<hetima.UPnpDeviceInfo> deviceInfoList = deviceSearcher.deviceInfoList;
   int newPortmappingIndex = 0;
   hetima.UpnpPPPDevice pppDevice = new hetima.UpnpPPPDevice(info);
   int mode = hetima.UpnpPPPDevice.MODE_POST;
   requestPortMapInfo() {
     pppDevice.requestGetGenericPortMapping(newPortmappingIndex, mode).then((hetima.UpnpGetGenericPortMappingResponse r) {
-      if (r.resultCode == -405 && mode == hetima.UpnpPPPDevice.MODE_POST) {
+      if (r.resultCode == 405 && mode == hetima.UpnpPPPDevice.MODE_POST) {
         mode = hetima.UpnpPPPDevice.MODE_M_POST;
         requestPortMapInfo();
         return;
